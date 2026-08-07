@@ -1403,9 +1403,23 @@ body.admin-mode .upload-grid { display: grid !important; }
           weightedPoints = weightedPoints / totalWeight;
         }
 
+        // Store tenure detail for breakdown modal
+        const tenureDetail = {};
+        Object.keys(tenureGroups).forEach(tenure => {
+          const group = tenureGroups[tenure];
+          if (group.length === 0) return;
+          const memberPoints = group.map(m => {
+            const wd = m.weeklyData.find(x => x.week === w);
+            return { name: m.name, points: wd ? wd.finalPoints : 0 };
+          });
+          const avg = memberPoints.reduce((s, mp) => s + mp.points, 0) / memberPoints.length;
+          tenureDetail[tenure] = { members: memberPoints, avg: +avg.toFixed(2), weight: TENURE_WEIGHTS[tenure] || 0 };
+        });
+
         weeklyScores.push({
           week: w,
-          weightedPoints: +weightedPoints.toFixed(2)
+          weightedPoints: +weightedPoints.toFixed(2),
+          tenureDetail
         });
       }
 
@@ -1416,6 +1430,7 @@ body.admin-mode .upload-grid { display: grid !important; }
         country: team.country,
         teamSize: members.length,
         members: members.map(m => m.name),
+        memberObjects: members,
         weeklyScores,
         totalScore: +totalScore.toFixed(2),
         avgScore: +(totalScore / Math.max(currentWeek, 1)).toFixed(2)
@@ -1675,9 +1690,9 @@ body.admin-mode .upload-grid { display: grid !important; }
         <tr class="${isTop2 ? 'top-five' : ''}">
           <td class="rank-cell ${tl.rank <= 2 ? 'rank-' + tl.rank : ''}">${tl.rank}</td>
           <td>
-            <div class="name-cell">
+            <div class="name-cell" data-tl="${tl.name}">
               <div class="name-avatar" style="background:${getAvatarColor(tl.name)}">${getInitials(tl.name)}</div>
-              ${tl.name}
+              <span>${tl.name}</span>
             </div>
           </td>
           <td><span class="country-badge country-${tl.country}">${tl.country}</span></td>
@@ -2186,6 +2201,117 @@ body.admin-mode .upload-grid { display: grid !important; }
     modal.classList.add('visible');
   }
 
+  // ─── TL SCORE BREAKDOWN MODAL ──────────────────────────────────
+  function showTLBreakdown(tlName) {
+    const tl = tlScores.find(x => x.name === tlName);
+    if (!tl) return;
+
+    const modal = document.getElementById('score-modal');
+
+    document.getElementById('score-modal-name').textContent = '👔 ' + tl.name;
+    document.getElementById('score-modal-subtitle').textContent =
+      'Desglose de puntuación Team Lead — High Season Incentive Program 2026';
+
+    let bodyHTML = '';
+
+    // Info chips
+    bodyHTML += `<div class="info-row">
+      <span class="info-chip">🌎 ${tl.country}</span>
+      <span class="info-chip">👥 ${tl.teamSize} miembros</span>
+      <span class="info-chip">📋 Fórmula: M1(10%) + M2(20%) + M3+(70%)</span>
+    </div>`;
+
+    // Summary cards
+    const prizeLabel = tl.rank <= 2 ? '🏆 iPad Air' : '—';
+    bodyHTML += `<div class="breakdown-summary">
+      <div class="sum-item">
+        <div class="sum-value">${tl.totalScore.toFixed(2)}</div>
+        <div class="sum-label">Pts Totales</div>
+      </div>
+      <div class="sum-item">
+        <div class="sum-value">${tl.avgScore.toFixed(2)}</div>
+        <div class="sum-label">Pts/Semana</div>
+      </div>
+      <div class="sum-item">
+        <div class="sum-value">#${tl.rank}</div>
+        <div class="sum-label">Posición</div>
+      </div>
+      <div class="sum-item">
+        <div class="sum-value">${prizeLabel}</div>
+        <div class="sum-label">Premio</div>
+      </div>
+    </div>`;
+
+    // Team members overview
+    bodyHTML += `<h4 style="font-size:0.9rem; margin-bottom:0.5rem;">👥 Miembros del Equipo</h4>`;
+    bodyHTML += `<div style="overflow-x:auto"><table class="breakdown-table">
+      <thead><tr><th>Promotor</th><th>Canal</th><th>Antigüedad</th><th>Peso</th><th>Pts Totales</th></tr></thead>
+      <tbody>`;
+    tl.memberObjects.forEach(m => {
+      const weight = TENURE_WEIGHTS[m.tenure] || 0;
+      bodyHTML += `<tr>
+        <td style="font-weight:700; text-align:left">${m.name}</td>
+        <td>${m.channel === 'Competitor' ? '⚔️ Comp.' : '📡 Otros'}</td>
+        <td style="font-weight:600">${m.tenure}</td>
+        <td>${(weight * 100).toFixed(0)}%</td>
+        <td style="font-weight:700; color:var(--didi-orange)">${m.totalFinalPoints.toFixed(2)}</td>
+      </tr>`;
+    });
+    bodyHTML += '</tbody></table></div>';
+
+    // Weekly weighted breakdown
+    bodyHTML += `<h4 style="font-size:0.9rem; margin:1rem 0 0.5rem;">📊 Desglose Semanal Ponderado</h4>`;
+    bodyHTML += `<div style="overflow-x:auto"><table class="breakdown-table">
+      <thead><tr>
+        <th>Semana</th><th>Fechas</th>`;
+    // Tenure group columns
+    ['M1', 'M2', 'M3+'].forEach(t => {
+      bodyHTML += `<th>Prom. ${t}</th><th>× ${(TENURE_WEIGHTS[t]*100).toFixed(0)}%</th>`;
+    });
+    bodyHTML += `<th>Pts Ponderados</th><th>Fórmula</th></tr></thead><tbody>`;
+
+    tl.weeklyScores.forEach(w => {
+      bodyHTML += `<tr><td style="font-weight:700">S${w.week}</td>`;
+      bodyHTML += `<td style="font-size:0.7rem">${getWeekDateRange(w.week)}</td>`;
+
+      const formulaParts = [];
+      ['M1', 'M2', 'M3+'].forEach(t => {
+        const td = w.tenureDetail[t];
+        if (td) {
+          const contribution = +(td.avg * td.weight).toFixed(2);
+          bodyHTML += `<td>${td.avg.toFixed(2)}<br><small style="color:#999">${td.members.map(m => m.name.split(' ')[0]).join(', ')}</small></td>`;
+          bodyHTML += `<td style="color:var(--didi-orange); font-weight:600">${contribution.toFixed(2)}</td>`;
+          formulaParts.push(`${td.avg.toFixed(2)}×${(td.weight*100).toFixed(0)}%`);
+        } else {
+          bodyHTML += `<td style="color:#ccc">—</td><td style="color:#ccc">—</td>`;
+        }
+      });
+
+      bodyHTML += `<td style="font-weight:800; color:var(--didi-orange)">${w.weightedPoints.toFixed(2)}</td>`;
+      bodyHTML += `<td class="formula-col">${formulaParts.join(' + ')}</td>`;
+      bodyHTML += `</tr>`;
+    });
+
+    // Total row
+    bodyHTML += `<tr style="background:var(--didi-light-gray); font-weight:800">
+      <td colspan="${2 + 3*2}" style="text-align:right">TOTAL →</td>
+      <td style="color:var(--didi-orange); font-size:1rem">${tl.totalScore.toFixed(2)}</td>
+      <td></td></tr>`;
+    bodyHTML += '</tbody></table></div>';
+
+    // Formula reminder
+    bodyHTML += `<div style="margin-top:1rem; padding:1rem; background:#FFF8F0; border-radius:var(--radius-sm); font-size:0.75rem; color:var(--didi-text-secondary)">
+      <strong>📋 Fórmula Team Lead:</strong><br>
+      • Pts Semana = (Promedio pts M1 × 10%) + (Promedio pts M2 × 20%) + (Promedio pts M3+ × 70%)<br>
+      • Se usa el promedio de <strong>puntos finales</strong> (con multiplicador de racha) de cada grupo de antigüedad<br>
+      • Si un grupo de antigüedad no tiene miembros, su peso se redistribuye proporcionalmente<br>
+      • <strong>Premio:</strong> Top 2 Team Leads ganan iPad Air
+    </div>`;
+
+    document.getElementById('score-modal-body').innerHTML = bodyHTML;
+    modal.classList.add('visible');
+  }
+
   function setupScoreModal() {
     const modal = document.getElementById('score-modal');
     const closeBtn = document.getElementById('score-modal-close');
@@ -2204,6 +2330,14 @@ body.admin-mode .upload-grid { display: grid !important; }
       const nameCell = e.target.closest('.name-cell[data-promoter]');
       if (nameCell) {
         showScoreBreakdown(nameCell.dataset.promoter);
+      }
+    });
+
+    // Delegate click on TL names in the table
+    document.getElementById('tl-tbody').addEventListener('click', e => {
+      const nameCell = e.target.closest('.name-cell[data-tl]');
+      if (nameCell) {
+        showTLBreakdown(nameCell.dataset.tl);
       }
     });
   }
