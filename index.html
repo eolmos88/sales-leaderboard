@@ -1528,21 +1528,21 @@ body.admin-mode .upload-grid { display: grid !important; }
 
     let ranked;
     if (weekNum === 0) {
-      // Overall top 5
+      // Overall top 5 (only those with points > 0)
       ranked = promoterScores
-        .filter(p => p.status !== 'Disqualified')
+        .filter(p => p.status !== 'Disqualified' && p.totalFinalPoints > 0)
         .slice(0, 5);
     } else {
-      // Weekly top 5
-      const weekRanked = promoterScores
+      // Weekly top 5 (only those with points > 0 that week)
+      ranked = promoterScores
         .filter(p => p.status !== 'Disqualified')
         .map(p => ({
           ...p,
           weekPoints: p.weeklyData.find(w => w.week === weekNum)?.finalPoints || 0
         }))
+        .filter(p => p.weekPoints > 0)
         .sort((a, b) => b.weekPoints - a.weekPoints)
         .slice(0, 5);
-      ranked = weekRanked;
     }
 
     if (ranked.length === 0) {
