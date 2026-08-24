@@ -1550,6 +1550,38 @@ body.admin-mode .upload-grid { display: grid !important; }
       return;
     }
 
+    // Check for tie at the top
+    const getPoints = (p) => weekNum === 0 ? p.totalFinalPoints : p.weekPoints;
+    const topPoints = getPoints(ranked[0]);
+    const hasTie = ranked.length > 1 && getPoints(ranked[1]) === topPoints;
+
+    // If there's a tie, show all tied promoters equally (no crown, no gold)
+    if (hasTie) {
+      const tiedCount = ranked.filter(p => getPoints(p) === topPoints).length;
+      const label = weekNum === 0 ? 'pts totales' : 'pts semana';
+      container.innerHTML = `
+        <div style="text-align:center; margin-bottom:1rem;">
+          <div style="font-size:1.1rem; font-weight:700; color:var(--didi-orange); margin-bottom:0.5rem;">
+            🤝 Empate en la cima — ${tiedCount} promotores con ${topPoints.toFixed(1)} pts
+          </div>
+          <div style="font-size:0.8rem; color:var(--didi-text-secondary);">
+            El liderazgo se definirá con los resultados acumulados
+          </div>
+        </div>
+        <div style="display:flex; justify-content:center; gap:1.5rem; flex-wrap:wrap;">
+          ${ranked.filter(p => getPoints(p) === topPoints).map(p => `
+            <div style="text-align:center;">
+              <div class="podium-avatar" style="background:${getAvatarColor(p.name)}; margin:0 auto 0.5rem;">
+                ${getInitials(p.name)}
+              </div>
+              <div class="podium-name" style="max-width:100px">${p.name}</div>
+              <div class="podium-points">${getPoints(p).toFixed(1)} ${label}</div>
+            </div>
+          `).join('')}
+        </div>`;
+      return;
+    }
+
     const barClasses = ['gold', 'silver', 'bronze', 'fourth', 'fifth'];
     const medals = ['🥇', '🥈', '🥉', '4°', '5°'];
     // Podium order: 2nd, 1st, 3rd, 4th, 5th (visual podium layout)
@@ -1559,7 +1591,7 @@ body.admin-mode .upload-grid { display: grid !important; }
       .filter(i => i < ranked.length)
       .map(i => {
         const p = ranked[i];
-        const pts = weekNum === 0 ? p.totalFinalPoints : p.weekPoints;
+        const pts = getPoints(p);
         const label = weekNum === 0 ? 'pts totales' : 'pts semana';
         return `
           <div class="podium-item">
