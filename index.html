@@ -1303,16 +1303,25 @@ body.admin-mode .upload-grid { display: grid !important; }
       let currentStreak = 0;
       let maxStreak = 0;
 
+      // Determine the last week with any data for this promoter
+      let lastActiveWeek = 0;
+      for (let w = 1; w <= TOTAL_WEEKS; w++) {
+        if (dftInfo.weeks[w] && dftInfo.weeks[w] > 0) lastActiveWeek = w;
+      }
+
       for (let w = 1; w <= TOTAL_WEEKS; w++) {
         const dfts = dftInfo.weeks[w] || 0;
         const achievement = dfts / quota;
         const basePoints = calcBasePoints(dfts, quota);
 
-        // Track streak
-        if (achievement >= 1.0) {
-          currentStreak++;
-        } else {
-          currentStreak = 0;
+        // Track streak — only reset if this week has passed (has data potential)
+        // Don't break streak on future weeks with no data yet
+        if (w <= lastActiveWeek) {
+          if (achievement >= 1.0) {
+            currentStreak++;
+          } else {
+            currentStreak = 0;
+          }
         }
         maxStreak = Math.max(maxStreak, currentStreak);
 
