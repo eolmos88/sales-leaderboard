@@ -1341,7 +1341,7 @@ body.admin-mode .upload-grid { display: grid !important; }
       }
 
       const totalFinalPoints = weeklyData.reduce((s, w) => s + w.finalPoints, 0);
-      const eligible = totalBasePoints >= ELIGIBILITY_FLOOR;
+      const eligible = totalFinalPoints >= ELIGIBILITY_FLOOR;
 
       promoterScores.push({
         name,
@@ -2074,7 +2074,7 @@ body.admin-mode .upload-grid { display: grid !important; }
       </div>
       <div class="sum-item">
         <div class="sum-value">${p.eligible ? '✅' : '❌'}</div>
-        <div class="sum-label">Elegible (≥${ELIGIBILITY_FLOOR} pts base)</div>
+        <div class="sum-label">Elegible (≥${ELIGIBILITY_FLOOR} pts totales)</div>
       </div>
     </div>`;
 
