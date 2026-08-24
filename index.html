@@ -1314,16 +1314,15 @@ body.admin-mode .upload-grid { display: grid !important; }
         const achievement = dfts / quota;
         const basePoints = calcBasePoints(dfts, quota);
 
-        // Track streak — only reset if this week has passed (has data potential)
-        // Don't break streak on future weeks with no data yet
+        // Track streak — only evaluate weeks up to last active week
         if (w <= lastActiveWeek) {
           if (achievement >= 1.0) {
             currentStreak++;
           } else {
             currentStreak = 0;
           }
+          maxStreak = Math.max(maxStreak, currentStreak);
         }
-        maxStreak = Math.max(maxStreak, currentStreak);
 
         const multiplier = getStreakMultiplier(currentStreak);
         const weekPoints = +(basePoints * multiplier).toFixed(2);
