@@ -1,0 +1,2359 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>🏆 BD Team — High Season Incentive Leaderboard</title>
+<style>
+/* ===== CSS VARIABLES & RESET ===== */
+:root {
+  --didi-orange: #FF6600;
+  --didi-orange-light: #FF8533;
+  --didi-orange-dark: #CC5200;
+  --didi-dark: #1A1A2E;
+  --didi-gray: #2D2D44;
+  --didi-light-gray: #F5F5F7;
+  --didi-white: #FFFFFF;
+  --didi-text: #333333;
+  --didi-text-secondary: #666666;
+  --didi-border: #E5E7EB;
+  --didi-success: #10B981;
+  --didi-warning: #F59E0B;
+  --didi-danger: #EF4444;
+  --gold: #FFD700;
+  --silver: #C0C0C0;
+  --bronze: #CD7F32;
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+  --radius: 16px;
+  --radius-sm: 8px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: linear-gradient(135deg, #FFF5EB 0%, #FFF 50%, #FFF5EB 100%);
+  color: var(--didi-text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== HERO HEADER ===== */
+.hero {
+  background: linear-gradient(135deg, var(--didi-dark) 0%, var(--didi-gray) 50%, var(--didi-orange-dark) 100%);
+  color: white;
+  padding: 2rem 1.5rem 1.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255,102,0,0.3) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero-logo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--didi-orange);
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+.hero-logo svg { vertical-align: middle; margin-right: 6px; }
+.hero h1 {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  position: relative;
+  line-height: 1.2;
+}
+.hero h1 span { color: var(--didi-orange); }
+.hero-meta {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+  position: relative;
+}
+.hero-badge {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ===== COUNTDOWN ===== */
+.countdown-bar {
+  background: var(--didi-orange);
+  color: white;
+  padding: 0.6rem 1.5rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.countdown-bar .timer-unit {
+  background: rgba(0,0,0,0.2);
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  min-width: 40px;
+  display: inline-block;
+  text-align: center;
+}
+
+/* ===== CURRENT WEEK INDICATOR ===== */
+.week-indicator {
+  background: var(--didi-white);
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--didi-border);
+}
+.week-pill {
+  padding: 0.35rem 0.8rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--didi-light-gray);
+  color: var(--didi-text-secondary);
+  transition: var(--transition);
+}
+.week-pill.active {
+  background: var(--didi-orange);
+  color: white;
+  transform: scale(1.1);
+}
+.week-pill.completed {
+  background: var(--didi-success);
+  color: white;
+}
+
+/* ===== DATA UPLOAD ===== */
+.upload-section {
+  max-width: 900px;
+  margin: 1.5rem auto;
+  padding: 0 1.5rem;
+}
+.upload-card {
+  background: white;
+  border: 2px dashed var(--didi-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-align: center;
+  transition: var(--transition);
+  cursor: pointer;
+}
+.upload-card:hover {
+  border-color: var(--didi-orange);
+  background: #FFF8F0;
+}
+.upload-card.loaded {
+  border-color: var(--didi-success);
+  border-style: solid;
+  background: #F0FDF4;
+}
+.upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+@media (max-width: 600px) {
+  .upload-grid { grid-template-columns: 1fr; }
+}
+.upload-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+.upload-card p { font-size: 0.8rem; color: var(--didi-text-secondary); }
+.upload-card input[type="file"] { display: none; }
+.upload-status {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* ===== TABS ===== */
+.tabs-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 0;
+  border-bottom: 2px solid var(--didi-border);
+}
+.tab-btn {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  background: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--didi-text-secondary);
+  cursor: pointer;
+  position: relative;
+  transition: var(--transition);
+}
+.tab-btn:hover { color: var(--didi-orange); }
+.tab-btn.active {
+  color: var(--didi-orange);
+}
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--didi-orange);
+  border-radius: 3px 3px 0 0;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ===== PODIUM ===== */
+.podium-section {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.podium-subtitle {
+  font-size: 0.85rem;
+  color: var(--didi-text-secondary);
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+}
+.podium-week-selector {
+  margin-bottom: 1.5rem;
+}
+.podium-week-selector select {
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--didi-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: white;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.podium-week-selector select:focus {
+  outline: none;
+  border-color: var(--didi-orange);
+}
+
+.podium {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+  min-height: 280px;
+  flex-wrap: wrap;
+}
+.podium-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: var(--transition);
+  animation: slideUp 0.6s ease-out both;
+}
+.podium-item:nth-child(1) { animation-delay: 0.2s; }
+.podium-item:nth-child(2) { animation-delay: 0s; }
+.podium-item:nth-child(3) { animation-delay: 0.4s; }
+.podium-item:nth-child(4) { animation-delay: 0.6s; }
+.podium-item:nth-child(5) { animation-delay: 0.8s; }
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.podium-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+.podium-item:nth-child(1) .podium-avatar { /* 2nd place displayed first in HTML order */ }
+.podium-crown {
+  position: absolute;
+  top: -16px;
+  font-size: 1.2rem;
+}
+.podium-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.3rem;
+  max-width: 90px;
+  line-height: 1.2;
+}
+.podium-points {
+  font-size: 0.75rem;
+  color: var(--didi-text-secondary);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+.podium-bar {
+  width: 72px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 0.5rem;
+  font-weight: 800;
+  color: white;
+  font-size: 1.2rem;
+}
+.podium-bar.gold {
+  background: linear-gradient(to top, #B8860B, var(--gold));
+  height: 140px;
+}
+.podium-bar.silver {
+  background: linear-gradient(to top, #808080, var(--silver));
+  height: 110px;
+}
+.podium-bar.bronze {
+  background: linear-gradient(to top, #8B4513, var(--bronze));
+  height: 85px;
+}
+.podium-bar.fourth {
+  background: linear-gradient(to top, #444, #666);
+  height: 65px;
+}
+.podium-bar.fifth {
+  background: linear-gradient(to top, #555, #777);
+  height: 50px;
+}
+
+/* ===== LEADERBOARD TABLE ===== */
+.leaderboard-section {
+  max-width: 1200px;
+  margin: 1rem auto 3rem;
+  padding: 0 1.5rem;
+}
+.leaderboard-card {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.leaderboard-header {
+  background: var(--didi-dark);
+  color: white;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.leaderboard-header h2 {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.search-box {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 50px;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  font-size: 0.85rem;
+  outline: none;
+  width: 200px;
+  transition: var(--transition);
+}
+.search-box::placeholder { color: rgba(255,255,255,0.5); }
+.search-box:focus { border-color: var(--didi-orange); background: rgba(255,255,255,0.2); }
+
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+thead th {
+  background: var(--didi-light-gray);
+  padding: 0.7rem 0.6rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--didi-text-secondary);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  cursor: pointer;
+  user-select: none;
+}
+thead th:hover { color: var(--didi-orange); }
+tbody tr {
+  border-bottom: 1px solid var(--didi-border);
+  transition: var(--transition);
+}
+tbody tr:hover { background: #FFF8F0; }
+tbody tr.top-five { background: #FFFBF0; }
+tbody tr.top-five:hover { background: #FFF3DD; }
+tbody tr.disqualified {
+  opacity: 0.4;
+  text-decoration: line-through;
+  background: #FEF2F2;
+}
+td {
+  padding: 0.6rem;
+  white-space: nowrap;
+}
+.rank-cell {
+  font-weight: 800;
+  font-size: 1rem;
+  text-align: center;
+  width: 40px;
+}
+.rank-1 { color: var(--gold); }
+.rank-2 { color: var(--silver); }
+.rank-3 { color: var(--bronze); }
+.name-cell {
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.name-cell:hover { color: var(--didi-orange); }
+.name-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--didi-orange);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.country-badge {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 50px;
+  font-weight: 700;
+}
+.country-MX { background: #DCF5DC; color: #166534; }
+.country-CO { background: #FEF3C7; color: #92400E; }
+.country-AR { background: #DBEAFE; color: #1E40AF; }
+
+.channel-badge {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+}
+.channel-Competitor { background: #FEE2E2; color: #991B1B; }
+.channel-Rest { background: #E0E7FF; color: #3730A3; }
+
+.streak-badge {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 50px;
+  font-weight: 700;
+  background: var(--didi-orange);
+  color: white;
+}
+.streak-0 { background: transparent; color: transparent; }
+
+.points-cell {
+  font-weight: 800;
+  color: var(--didi-orange);
+  font-size: 1rem;
+}
+.week-points {
+  font-size: 0.75rem;
+  color: var(--didi-text-secondary);
+  font-weight: 500;
+}
+.week-points.high { color: var(--didi-success); font-weight: 700; }
+.week-points.zero { color: var(--didi-danger); }
+
+.prize-indicator {
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.prize-ipad { color: var(--gold); }
+.prize-tv { color: var(--didi-orange); }
+
+.eligibility-badge {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+}
+.eligible { background: #D1FAE5; color: #065F46; }
+.not-eligible { background: #FEE2E2; color: #991B1B; }
+.on-track { background: #FEF3C7; color: #92400E; }
+
+/* ===== STATS CARDS ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.stat-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 1rem;
+  box-shadow: var(--shadow);
+  text-align: center;
+  transition: var(--transition);
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--didi-orange);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--didi-text-secondary);
+  margin-top: 0.3rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* ===== PRIZES SECTION ===== */
+.prizes-section {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+.prizes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+.prize-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  text-align: center;
+  border-top: 4px solid var(--didi-orange);
+  transition: var(--transition);
+}
+.prize-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.prize-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.prize-title { font-weight: 800; font-size: 1rem; margin-bottom: 0.3rem; }
+.prize-desc { font-size: 0.85rem; color: var(--didi-text-secondary); }
+.prize-winner {
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--didi-border);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--didi-orange);
+}
+
+/* ===== RULES SECTION ===== */
+.rules-section {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+.rules-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.rule-item h4 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.rule-item p {
+  font-size: 0.8rem;
+  color: var(--didi-text-secondary);
+  line-height: 1.5;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--didi-dark);
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 0.75rem;
+  margin-top: 3rem;
+}
+footer a { color: var(--didi-orange); text-decoration: none; }
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: var(--didi-text-secondary);
+}
+.empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+.empty-state h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--didi-text); }
+.empty-state p { font-size: 0.9rem; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+  .hero { padding: 1.5rem 1rem 1rem; }
+  .hero h1 { font-size: 1.3rem; }
+  .podium { gap: 0.4rem; }
+  .podium-bar { width: 52px; }
+  .podium-bar.gold { height: 100px; }
+  .podium-bar.silver { height: 80px; }
+  .podium-bar.bronze { height: 65px; }
+  .podium-bar.fourth { height: 50px; }
+  .podium-bar.fifth { height: 40px; }
+  .podium-avatar { width: 40px; height: 40px; font-size: 1rem; }
+  .podium-name { font-size: 0.65rem; max-width: 60px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .tab-btn { padding: 0.6rem 0.8rem; font-size: 0.8rem; }
+  table { font-size: 0.75rem; }
+  td, thead th { padding: 0.4rem; }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.pulse { animation: pulse 2s infinite; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.fade-in { animation: fadeIn 0.5s ease-out; }
+
+/* ===== LOADING OVERLAY ===== */
+#loading-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.9);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--didi-orange);
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--didi-border);
+  border-top-color: var(--didi-orange);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 1rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== ADMIN MODE ===== */
+.admin-only { display: none !important; }
+body.admin-mode .admin-only { display: block !important; }
+body.admin-mode .upload-grid { display: grid !important; }
+.admin-toggle {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background: var(--didi-dark);
+  color: white;
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  z-index: 900;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin-toggle:hover { background: var(--didi-orange); transform: scale(1.1); }
+.admin-toggle.active { background: var(--didi-orange); }
+
+/* ===== ADMIN PASSWORD DIALOG ===== */
+.admin-dialog-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1100;
+  justify-content: center;
+  align-items: center;
+}
+.admin-dialog-overlay.visible { display: flex; }
+.admin-dialog {
+  background: white;
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: var(--shadow-lg);
+  max-width: 360px;
+  width: 90%;
+  text-align: center;
+}
+.admin-dialog h3 { margin-bottom: 1rem; font-size: 1.1rem; }
+.admin-dialog input[type="password"] {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 2px solid var(--didi-border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  outline: none;
+  transition: var(--transition);
+  margin-bottom: 0.5rem;
+}
+.admin-dialog input[type="password"]:focus { border-color: var(--didi-orange); }
+.admin-dialog .error-msg { color: var(--didi-danger); font-size: 0.8rem; min-height: 1.2em; margin-bottom: 0.5rem; }
+.admin-dialog button {
+  background: var(--didi-orange);
+  color: white;
+  border: none;
+  padding: 0.6rem 2rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.admin-dialog button:hover { background: var(--didi-orange-dark); }
+.admin-dialog .cancel-link {
+  display: block;
+  margin-top: 0.8rem;
+  font-size: 0.8rem;
+  color: var(--didi-text-secondary);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* ===== SCORE BREAKDOWN MODAL ===== */
+.score-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1100;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem 1rem;
+  overflow-y: auto;
+}
+.score-modal-overlay.visible { display: flex; }
+.score-modal {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  max-width: 700px;
+  width: 100%;
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+.score-modal-header {
+  background: linear-gradient(135deg, var(--didi-dark), var(--didi-orange-dark));
+  color: white;
+  padding: 1.5rem;
+  position: relative;
+}
+.score-modal-header h2 { font-size: 1.2rem; margin-bottom: 0.3rem; }
+.score-modal-header .subtitle { font-size: 0.85rem; opacity: 0.8; }
+.score-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.score-modal-close:hover { background: rgba(255,255,255,0.4); }
+.score-modal-body { padding: 1.5rem; }
+.score-modal-body .info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.score-modal-body .info-chip {
+  background: var(--didi-light-gray);
+  padding: 0.4rem 0.8rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.breakdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+}
+.breakdown-table th {
+  background: var(--didi-light-gray);
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.breakdown-table td {
+  padding: 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--didi-border);
+}
+.breakdown-table tr:last-child td { border-bottom: none; }
+.breakdown-table .formula-col { font-size: 0.65rem; color: var(--didi-text-secondary); }
+.breakdown-summary {
+  background: var(--didi-light-gray);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+.breakdown-summary .sum-item { text-align: center; }
+.breakdown-summary .sum-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--didi-orange);
+}
+.breakdown-summary .sum-label {
+  font-size: 0.7rem;
+  color: var(--didi-text-secondary);
+  text-transform: uppercase;
+}
+.score-modal-actions {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--didi-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+.btn-print {
+  background: var(--didi-orange);
+  color: white;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-print:hover { background: var(--didi-orange-dark); }
+.btn-secondary {
+  background: var(--didi-light-gray);
+  color: var(--didi-text);
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-secondary:hover { background: var(--didi-border); }
+
+@media print {
+  body * { visibility: hidden; }
+  .score-modal, .score-modal * { visibility: visible; }
+  .score-modal { position: fixed; inset: 0; max-width: 100%; border-radius: 0; box-shadow: none; }
+  .score-modal-close, .score-modal-actions, .admin-toggle { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING OVERLAY -->
+<div id="loading-overlay">
+  <div style="text-align:center">
+    <div class="spinner"></div>
+    <div>Cargando datos...</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-logo">
+    <svg width="40" height="20" viewBox="0 0 100 50">
+      <text x="0" y="38" font-size="42" font-weight="900" fill="#FF6600" font-family="Arial">DiDi</text>
+    </svg>
+  </div>
+  <h1>🏆 BD TEAM <span>INCENTIVE</span> PROGRAM</h1>
+  <p style="font-size:0.9rem; opacity:0.8; margin-bottom:0.5rem; position:relative;">
+    Sales Operations Strategy & Execution Plan | BD Team
+  </p>
+  <div class="hero-meta">
+    <span class="hero-badge">🌎 MX</span>
+    <span class="hero-badge">📅 9 Semanas (31 Ago – 1 Nov 2026)</span>
+    <span class="hero-badge">🏅 3 Ganadores</span>
+  </div>
+</header>
+
+<!-- COUNTDOWN -->
+<div class="countdown-bar" id="countdown-bar">
+  ⏱ Tiempo restante:
+  <span class="timer-unit" id="cd-days">--</span>d
+  <span class="timer-unit" id="cd-hours">--</span>h
+  <span class="timer-unit" id="cd-mins">--</span>m
+  <span class="timer-unit" id="cd-secs">--</span>s
+</div>
+
+<!-- WEEK INDICATOR -->
+<div class="week-indicator" id="week-indicator"></div>
+
+<!-- DATA UPLOAD (admin only) -->
+<div class="upload-section admin-only">
+  <div class="section-title">📂 Cargar Datos</div>
+  <div class="upload-grid">
+    <label class="upload-card" id="dft-upload-card">
+      <h3>📊 Registro de DFTs</h3>
+      <p>Sube el archivo <strong>dfts.csv</strong></p>
+      <p style="font-size:0.7rem; margin-top:0.3rem;">promoter_name, country, team, channel, dft_date, status</p>
+      <input type="file" id="dft-file-input" accept=".csv">
+      <div class="upload-status" id="dft-status">Click para seleccionar archivo</div>
+    </label>
+    <label class="upload-card" id="roster-upload-card">
+      <h3>👥 Roster de Promotores</h3>
+      <p>Sube el archivo <strong>roster.csv</strong></p>
+      <p style="font-size:0.7rem; margin-top:0.3rem;">promoter_name, country, team, channel, tenure, status</p>
+      <input type="file" id="roster-file-input" accept=".csv">
+      <div class="upload-status" id="roster-status">Click para seleccionar archivo</div>
+    </label>
+  </div>
+  <div style="text-align:center; margin-top:1rem; display:flex; justify-content:center; gap:0.8rem; flex-wrap:wrap;">
+    <button id="load-demo-btn" style="background:var(--didi-orange); color:white; border:none; padding:0.6rem 1.5rem; border-radius:50px; font-weight:700; font-size:0.85rem; cursor:pointer; transition:var(--transition);">
+      ▶ Cargar Datos de Demostración
+    </button>
+    <button id="generate-btn" style="background:var(--didi-dark); color:white; border:none; padding:0.6rem 1.5rem; border-radius:50px; font-weight:700; font-size:0.85rem; cursor:pointer; transition:var(--transition); display:none;">
+      📥 Generar Página Compartible
+    </button>
+  </div>
+  <div id="generate-status" style="text-align:center; margin-top:0.8rem; font-size:0.8rem; color:var(--didi-success); font-weight:600; display:none;"></div>
+</div>
+
+<!-- ADMIN PASSWORD DIALOG -->
+<div class="admin-dialog-overlay" id="admin-dialog">
+  <div class="admin-dialog">
+    <h3>🔒 Acceso Administrador</h3>
+    <input type="password" id="admin-password" placeholder="Ingresa la contraseña">
+    <div class="error-msg" id="admin-error"></div>
+    <button id="admin-submit">Ingresar</button>
+    <span class="cancel-link" id="admin-cancel">Cancelar</span>
+  </div>
+</div>
+
+<!-- SCORE BREAKDOWN MODAL -->
+<div class="score-modal-overlay" id="score-modal">
+  <div class="score-modal">
+    <div class="score-modal-header">
+      <button class="score-modal-close" id="score-modal-close">✕</button>
+      <h2 id="score-modal-name"></h2>
+      <div class="subtitle" id="score-modal-subtitle"></div>
+    </div>
+    <div class="score-modal-body" id="score-modal-body"></div>
+    <div class="score-modal-actions">
+      <button class="btn-secondary" id="score-modal-close2">Cerrar</button>
+      <button class="btn-print" id="score-modal-print">🖨 Imprimir / Guardar PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT (hidden until data loads) -->
+<div id="main-content" style="display:none;">
+
+  <!-- STATS -->
+  <div class="podium-section">
+    <div class="stats-grid" id="stats-grid"></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs-container">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="promoters">🏃 Promotores</button>
+      <button class="tab-btn" data-tab="teamleads">👔 Team Leads</button>
+      <button class="tab-btn" data-tab="prizes">🎁 Premios</button>
+      <button class="tab-btn" data-tab="rules">📋 Reglas</button>
+    </div>
+  </div>
+
+  <!-- TAB: PROMOTERS -->
+  <div class="tab-content active" id="tab-promoters">
+    <!-- PODIUM -->
+    <div class="podium-section">
+      <div class="section-title">🥇 Podio Semanal — Top 5</div>
+      <div class="podium-week-selector">
+        <select id="podium-week-select"></select>
+      </div>
+      <div class="podium" id="podium-container"></div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div class="leaderboard-section">
+      <div class="leaderboard-card">
+        <div class="leaderboard-header">
+          <h2>📊 Tabla General de Posiciones</h2>
+          <input type="text" class="search-box" id="search-input" placeholder="🔍 Buscar promotor...">
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead id="promoter-thead"></thead>
+            <tbody id="promoter-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: TEAM LEADS -->
+  <div class="tab-content" id="tab-teamleads">
+    <div class="podium-section">
+      <div class="section-title">👔 Ranking de Team Leads</div>
+      <p class="podium-subtitle">Evaluados por promedio ponderado de quota del equipo según antigüedad: M1 (10%) + M2 (20%) + M3+ (70%)</p>
+    </div>
+    <div class="leaderboard-section">
+      <div class="leaderboard-card">
+        <div class="leaderboard-header">
+          <h2>📊 Tabla de Team Leads</h2>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead id="tl-thead"></thead>
+            <tbody id="tl-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: PRIZES -->
+  <div class="tab-content" id="tab-prizes">
+    <div class="prizes-section">
+      <div class="section-title">🎁 Pool de Premios</div>
+      <div class="prizes-grid" id="prizes-grid"></div>
+    </div>
+  </div>
+
+  <!-- TAB: RULES -->
+  <div class="tab-content" id="tab-rules">
+    <div class="rules-section">
+      <div class="section-title">📋 Reglas del Programa</div>
+      <div class="rules-card">
+        <div class="rules-grid" id="rules-grid"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- EMPTY STATE -->
+<div id="empty-state" class="empty-state">
+  <div class="icon">📊</div>
+  <h3>El leaderboard se mostrará cuando los datos estén disponibles</h3>
+  <p>Contacta al equipo de operaciones si no ves información.</p>
+</div>
+
+<!-- ADMIN TOGGLE BUTTON -->
+<button class="admin-toggle" id="admin-toggle" title="Modo administrador">⚙️</button>
+
+<!-- FOOTER -->
+<footer>
+  <p>DiDi BD Team Incentive Program 2026 · Sales Operations · MX</p>
+  <p style="margin-top:0.3rem;">Última actualización: <span id="last-update">--</span></p>
+</footer>
+
+<script>
+/* =======================================================================
+   HIGH SEASON INCENTIVE PROGRAM — LEADERBOARD ENGINE
+   =======================================================================
+   Self-contained scoring engine + UI renderer.
+   Reads two CSVs: DFTs log + Roster.
+   ======================================================================= */
+
+(function() {
+  'use strict';
+
+  // ─── CONFIG ───────────────────────────────────────────────────────
+  const PROMO_START = new Date('2026-08-31');
+  const PROMO_END   = new Date('2026-11-01');
+  const TOTAL_WEEKS = 9;
+  const QUOTAS = { Competitor: 12, Rest: 10 };
+  // ── Channel classification ──────────────────────────────────────
+  // Any channel whose normalized name matches one of these is
+  // treated as "Competitor" (quota 12). Everything else → "Rest" (quota 10).
+  // Add new entries here in lowercase, without accents, when new
+  // competitor channels appear.
+  const COMPETITOR_CHANNELS = [
+    'competitor',
+    'viaje competidor',
+    'viajes competidor',
+    'uber mujer'
+  ];
+  const STREAK_MULTIPLIERS = { 0:1, 1:1, 2:1.2, 3:1.5, 4:1.8 }; // 5+ = 2.0
+  const TENURE_WEIGHTS = { M1: 0.10, M2: 0.20, 'M3+': 0.70 };
+  const ELIGIBILITY_FLOOR = 8; // min base points over 9 weeks
+
+  // ─── STATE ────────────────────────────────────────────────────────
+  let dftsData = [];
+  let rosterData = [];
+  let promoterScores = [];
+  let tlScores = [];
+  let currentWeek = 0;
+
+  // ─── UTILITIES ────────────────────────────────────────────────────
+
+  // Strip accents/diacritics and lowercase for bulletproof matching
+  function normalize(str) {
+    return (str || '').trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
+
+  // Resolve a raw channel value to 'Competitor' or 'Rest'
+  function resolveChannel(raw) {
+    const norm = normalize(raw);
+    return COMPETITOR_CHANNELS.some(c => norm === c) ? 'Competitor' : 'Rest';
+  }
+
+  function parseCSV(text) {
+    const lines = text.trim().split(/\r?\n/);
+    if (lines.length < 2) return [];
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/\s+/g, '_'));
+    const rows = [];
+    for (let i = 1; i < lines.length; i++) {
+      const vals = lines[i].split(',').map(v => v.trim());
+      if (vals.length < headers.length) continue;
+      const row = {};
+      headers.forEach((h, j) => row[h] = vals[j]);
+      rows.push(row);
+    }
+    return rows;
+  }
+
+  function getWeekNumber(dateStr) {
+    if (!dateStr) return -1;
+    var d;
+    // Support YYYY-MM-DD and M/D/YYYY formats
+    if (dateStr.indexOf('-') > -1) {
+      d = new Date(dateStr + 'T00:00:00');
+    } else if (dateStr.indexOf('/') > -1) {
+      var parts = dateStr.split('/');
+      d = new Date(+parts[2], +parts[0] - 1, +parts[1]);
+    } else {
+      d = new Date(dateStr);
+    }
+    if (isNaN(d.getTime())) return -1;
+    const diff = d - PROMO_START;
+    if (diff < 0) return -1;
+    const week = Math.floor(diff / (7 * 24 * 60 * 60 * 1000)) + 1;
+    return week > TOTAL_WEEKS ? -1 : week;
+  }
+
+  function getWeekDateRange(weekNum) {
+    const start = new Date(PROMO_START.getTime() + (weekNum - 1) * 7 * 24 * 60 * 60 * 1000);
+    const end = new Date(start.getTime() + 6 * 24 * 60 * 60 * 1000);
+    const fmt = d => d.toLocaleDateString('es-MX', { day:'numeric', month:'short' });
+    return `${fmt(start)} – ${fmt(end)}`;
+  }
+
+  function getCurrentWeek() {
+    const now = new Date();
+    const diff = now - PROMO_START;
+    if (diff < 0) return 0;
+    const week = Math.floor(diff / (7 * 24 * 60 * 60 * 1000)) + 1;
+    return Math.min(week, TOTAL_WEEKS);
+  }
+
+  function calcBasePoints(dfts, quota) {
+    const achievement = dfts / quota;
+    if (achievement < 0.70) return 0;
+    if (achievement >= 2.0) return 2.0;
+    // Linear from 0.7 at 70% to 2.0 at 200%
+    return 0.7 + (achievement - 0.70) * (2.0 - 0.7) / (2.0 - 0.70);
+  }
+
+  function getStreakMultiplier(streakWeeks) {
+    if (streakWeeks >= 5) return 2.0;
+    return STREAK_MULTIPLIERS[streakWeeks] || 1;
+  }
+
+  function getInitials(name) {
+    return name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  }
+
+  function getAvatarColor(name) {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    const colors = ['#FF6600','#E53E3E','#38A169','#3182CE','#805AD5','#D69E2E','#DD6B20','#319795'];
+    return colors[Math.abs(hash) % colors.length];
+  }
+
+  // ─── SCORING ENGINE ──────────────────────────────────────────────
+  function calculateScores() {
+    // Build roster lookup by promoter_id (unique numeric key)
+    const rosterMap = {};      // promoter_id → roster row
+    const rosterDisplay = {};  // promoter_id → promoter_name for display
+    rosterData.forEach(r => {
+      const id = (r.promoter_id || '').trim();
+      const name = (r.promoter_name || '').trim();
+      if (!id && !name) return;
+      // Use promoter_id as primary key; fall back to normalized name if no id
+      const key = id || normalize(name);
+      rosterMap[key] = r;
+      rosterDisplay[key] = name;
+    });
+
+    // Group DFTs by promoter_id
+    const promoterDFTs = {};
+    const dftDisplay = {};     // promoter_id → promoter_name
+    dftsData.forEach(row => {
+      const id = (row.promoter_id || '').trim();
+      const name = (row.promoter_name || '').trim();
+      if (!id && !name) return;
+      const key = id || normalize(name);
+      if (!promoterDFTs[key]) promoterDFTs[key] = { weeks: {} };
+      if (!dftDisplay[key]) dftDisplay[key] = name;
+      const week = getWeekNumber(row.dft_date);
+      if (week < 1) return;
+      if (!promoterDFTs[key].weeks[week]) promoterDFTs[key].weeks[week] = 0;
+      promoterDFTs[key].weeks[week]++;
+    });
+
+    // Calculate per-promoter scores
+    promoterScores = [];
+    const allKeys = new Set([...Object.keys(promoterDFTs), ...Object.keys(rosterMap)]);
+
+    allKeys.forEach(key => {
+      const name = rosterDisplay[key] || dftDisplay[key] || key;
+      const roster = rosterMap[key] || {};
+      const dftInfo = promoterDFTs[key] || { weeks: {} };
+      const channel = resolveChannel(roster.channel || 'Rest');
+      const quota = QUOTAS[channel] || 9;
+      const status = (roster.status || 'Active').trim();
+
+      const weeklyData = [];
+      let totalBasePoints = 0;
+      let currentStreak = 0;
+      let maxStreak = 0;
+
+      // Determine the last week with any data for this promoter
+      let lastActiveWeek = 0;
+      for (let w = 1; w <= TOTAL_WEEKS; w++) {
+        if (dftInfo.weeks[w] && dftInfo.weeks[w] > 0) lastActiveWeek = w;
+      }
+
+      for (let w = 1; w <= TOTAL_WEEKS; w++) {
+        const dfts = dftInfo.weeks[w] || 0;
+        const achievement = dfts / quota;
+        const basePoints = calcBasePoints(dfts, quota);
+
+        // Track streak — only evaluate weeks up to last active week
+        if (w <= lastActiveWeek) {
+          if (achievement >= 1.0) {
+            currentStreak++;
+          } else {
+            currentStreak = 0;
+          }
+          maxStreak = Math.max(maxStreak, currentStreak);
+        }
+
+        const multiplier = getStreakMultiplier(currentStreak);
+        const weekPoints = +(basePoints * multiplier).toFixed(2);
+
+        totalBasePoints += basePoints;
+
+        weeklyData.push({
+          week: w,
+          dfts,
+          achievement: +(achievement * 100).toFixed(1),
+          basePoints: +basePoints.toFixed(2),
+          streak: currentStreak,
+          multiplier,
+          finalPoints: weekPoints
+        });
+      }
+
+      const totalFinalPoints = weeklyData.reduce((s, w) => s + w.finalPoints, 0);
+      const eligible = totalFinalPoints >= ELIGIBILITY_FLOOR;
+
+      promoterScores.push({
+        name,
+        country: (roster.country || '').trim(),
+        team: (roster.team || '').trim(),
+        channel,
+        tenure: (roster.tenure || '').trim(),
+        status,
+        weeklyData,
+        totalBasePoints: +totalBasePoints.toFixed(2),
+        totalFinalPoints: +totalFinalPoints.toFixed(2),
+        currentStreak,
+        maxStreak,
+        eligible: status === 'Disqualified' ? false : eligible
+      });
+    });
+
+    // Sort by total final points descending
+    promoterScores.sort((a, b) => {
+      if (a.status === 'Disqualified' && b.status !== 'Disqualified') return 1;
+      if (b.status === 'Disqualified' && a.status !== 'Disqualified') return -1;
+      return b.totalFinalPoints - a.totalFinalPoints;
+    });
+
+    // Assign ranks
+    let rank = 0;
+    promoterScores.forEach((p, i) => {
+      if (p.status !== 'Disqualified') {
+        rank++;
+        p.rank = rank;
+      } else {
+        p.rank = '-';
+      }
+    });
+
+    // Calculate TL scores
+    calculateTLScores();
+  }
+
+  function calculateTLScores() {
+    const teams = {};
+
+    promoterScores.forEach(p => {
+      if (p.status === 'Disqualified' || !p.team) return;
+      if (!teams[p.team]) teams[p.team] = { members: [], country: p.country };
+      teams[p.team].members.push(p);
+    });
+
+    tlScores = [];
+
+    Object.keys(teams).forEach(tlName => {
+      const team = teams[tlName];
+      const members = team.members;
+
+      // Calculate weighted points per week
+      const weeklyScores = [];
+      for (let w = 1; w <= TOTAL_WEEKS; w++) {
+        // Group members by tenure (M3 and M3+ are treated the same)
+        const tenureGroups = { M1: [], M2: [], 'M3+': [] };
+        members.forEach(m => {
+          const t = m.tenure || 'M3+';
+          if (t === 'M3' || t === 'M3+') tenureGroups['M3+'].push(m);
+          else if (tenureGroups[t]) tenureGroups[t].push(m);
+          else tenureGroups['M3+'].push(m);
+        });
+
+        let weightedPoints = 0;
+        let totalWeight = 0;
+
+        Object.keys(tenureGroups).forEach(tenure => {
+          const group = tenureGroups[tenure];
+          if (group.length === 0) return;
+          const avgPoints = group.reduce((s, m) => {
+            const wd = m.weeklyData.find(x => x.week === w);
+            return s + (wd ? wd.finalPoints : 0);
+          }, 0) / group.length;
+          const weight = TENURE_WEIGHTS[tenure] || 0;
+          weightedPoints += avgPoints * weight;
+          totalWeight += weight;
+        });
+
+        // Normalize if not all tenure groups present
+        if (totalWeight > 0 && totalWeight < 1) {
+          weightedPoints = weightedPoints / totalWeight;
+        }
+
+        // Store tenure detail for breakdown modal
+        const tenureDetail = {};
+        Object.keys(tenureGroups).forEach(tenure => {
+          const group = tenureGroups[tenure];
+          if (group.length === 0) return;
+          const memberPoints = group.map(m => {
+            const wd = m.weeklyData.find(x => x.week === w);
+            return { name: m.name, points: wd ? wd.finalPoints : 0 };
+          });
+          const avg = memberPoints.reduce((s, mp) => s + mp.points, 0) / memberPoints.length;
+          tenureDetail[tenure] = { members: memberPoints, avg: +avg.toFixed(2), weight: TENURE_WEIGHTS[tenure] || 0 };
+        });
+
+        weeklyScores.push({
+          week: w,
+          weightedPoints: +weightedPoints.toFixed(2),
+          tenureDetail
+        });
+      }
+
+      const totalScore = weeklyScores.reduce((s, w) => s + w.weightedPoints, 0);
+
+      tlScores.push({
+        name: tlName,
+        country: team.country,
+        teamSize: members.length,
+        members: members.map(m => m.name),
+        memberObjects: members,
+        weeklyScores,
+        totalScore: +totalScore.toFixed(2),
+        avgScore: +(totalScore / Math.max(currentWeek, 1)).toFixed(2)
+      });
+    });
+
+    tlScores.sort((a, b) => b.totalScore - a.totalScore);
+    tlScores.forEach((tl, i) => tl.rank = i + 1);
+  }
+
+  // ─── RENDERING ────────────────────────────────────────────────────
+
+  function renderCountdown() {
+    const now = new Date();
+    const diff = PROMO_END - now;
+    const bar = document.getElementById('countdown-bar');
+    if (diff <= 0) {
+      bar.innerHTML = '🎉 ¡El programa ha finalizado!';
+      return;
+    }
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+    const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+    const secs = Math.floor((diff % (1000*60)) / 1000);
+    document.getElementById('cd-days').textContent = days;
+    document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+    document.getElementById('cd-mins').textContent = String(mins).padStart(2,'0');
+    document.getElementById('cd-secs').textContent = String(secs).padStart(2,'0');
+  }
+
+  function renderWeekIndicator() {
+    const container = document.getElementById('week-indicator');
+    let html = '';
+    for (let w = 1; w <= TOTAL_WEEKS; w++) {
+      let cls = 'week-pill';
+      if (w < currentWeek) cls += ' completed';
+      else if (w === currentWeek) cls += ' active';
+      html += `<span class="${cls}" title="${getWeekDateRange(w)}">S${w}</span>`;
+    }
+    container.innerHTML = html;
+  }
+
+  function renderStats() {
+    const active = promoterScores.filter(p => p.status !== 'Disqualified');
+    const totalDFTs = dftsData.filter(r => r.dft_date && r.dft_date.trim() !== '').length;
+    const avgPoints = active.length ? (active.reduce((s,p) => s + p.totalFinalPoints, 0) / active.length).toFixed(1) : 0;
+    const streakers = active.filter(p => p.currentStreak >= 2).length;
+    const eligible = active.filter(p => p.eligible).length;
+
+    const stats = [
+      { value: active.length, label: 'Promotores Activos', icon: '👥' },
+      { value: totalDFTs, label: 'DFTs Totales', icon: '🚗' },
+      { value: avgPoints, label: 'Pts Promedio', icon: '📈' },
+      { value: streakers, label: 'Con Racha', icon: '🔥' },
+      { value: `S${currentWeek || '-'}`, label: 'Semana Actual', icon: '📅' },
+      { value: eligible, label: 'Elegibles', icon: '✅' },
+    ];
+
+    document.getElementById('stats-grid').innerHTML = stats.map(s => `
+      <div class="stat-card">
+        <div style="font-size:1.5rem;margin-bottom:0.3rem">${s.icon}</div>
+        <div class="stat-value">${s.value}</div>
+        <div class="stat-label">${s.label}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderPodium(weekNum) {
+    const container = document.getElementById('podium-container');
+
+    let ranked;
+    if (weekNum === 0) {
+      // Overall top 5 (only those with points > 0)
+      ranked = promoterScores
+        .filter(p => p.status !== 'Disqualified' && p.totalFinalPoints > 0)
+        .slice(0, 5);
+    } else {
+      // Weekly top 5 (only those with points > 0 that week)
+      ranked = promoterScores
+        .filter(p => p.status !== 'Disqualified')
+        .map(p => ({
+          ...p,
+          weekPoints: p.weeklyData.find(w => w.week === weekNum)?.finalPoints || 0
+        }))
+        .filter(p => p.weekPoints > 0)
+        .sort((a, b) => b.weekPoints - a.weekPoints)
+        .slice(0, 5);
+    }
+
+    if (ranked.length === 0) {
+      container.innerHTML = '<div class="empty-state"><p>Sin datos para esta semana</p></div>';
+      return;
+    }
+
+    // Check for tie at the top
+    const getPoints = (p) => weekNum === 0 ? p.totalFinalPoints : p.weekPoints;
+    const topPoints = getPoints(ranked[0]);
+    const hasTie = ranked.length > 1 && getPoints(ranked[1]) === topPoints;
+
+    // If there's a tie, show all tied promoters equally (no crown, no gold)
+    if (hasTie) {
+      const tiedCount = ranked.filter(p => getPoints(p) === topPoints).length;
+      const label = weekNum === 0 ? 'pts totales' : 'pts semana';
+      container.innerHTML = `
+        <div style="text-align:center; margin-bottom:1rem;">
+          <div style="font-size:1.1rem; font-weight:700; color:var(--didi-orange); margin-bottom:0.5rem;">
+            🤝 Empate en la cima — ${tiedCount} promotores con ${topPoints.toFixed(1)} pts
+          </div>
+          <div style="font-size:0.8rem; color:var(--didi-text-secondary);">
+            El liderazgo se definirá con los resultados acumulados
+          </div>
+        </div>
+        <div style="display:flex; justify-content:center; gap:1.5rem; flex-wrap:wrap;">
+          ${ranked.filter(p => getPoints(p) === topPoints).map(p => `
+            <div style="text-align:center;">
+              <div class="podium-avatar" style="background:${getAvatarColor(p.name)}; margin:0 auto 0.5rem;">
+                ${getInitials(p.name)}
+              </div>
+              <div class="podium-name" style="max-width:100px">${p.name}</div>
+              <div class="podium-points">${getPoints(p).toFixed(1)} ${label}</div>
+            </div>
+          `).join('')}
+        </div>`;
+      return;
+    }
+
+    const barClasses = ['gold', 'silver', 'bronze', 'fourth', 'fifth'];
+    const medals = ['🥇', '🥈', '🥉', '4°', '5°'];
+    // Podium order: 2nd, 1st, 3rd, 4th, 5th (visual podium layout)
+    const displayOrder = ranked.length >= 3 ? [1, 0, 2, 3, 4] : ranked.map((_, i) => i);
+
+    container.innerHTML = displayOrder
+      .filter(i => i < ranked.length)
+      .map(i => {
+        const p = ranked[i];
+        const pts = getPoints(p);
+        const label = weekNum === 0 ? 'pts totales' : 'pts semana';
+        return `
+          <div class="podium-item">
+            <div class="podium-avatar" style="background:${getAvatarColor(p.name)}">
+              ${i === 0 ? '<span class="podium-crown">👑</span>' : ''}
+              ${getInitials(p.name)}
+            </div>
+            <div class="podium-name">${p.name}</div>
+            <div class="podium-points">${pts.toFixed(1)} ${label}</div>
+            <div class="podium-bar ${barClasses[i]}">${medals[i]}</div>
+          </div>
+        `;
+      }).join('');
+  }
+
+  function renderPodiumSelector() {
+    const select = document.getElementById('podium-week-select');
+    let html = '<option value="0">🏆 General (Acumulado)</option>';
+    for (let w = 1; w <= TOTAL_WEEKS; w++) {
+      const label = `Semana ${w} (${getWeekDateRange(w)})`;
+      html += `<option value="${w}" ${w === currentWeek ? 'selected' : ''}>${label}</option>`;
+    }
+    select.innerHTML = html;
+    select.addEventListener('change', () => {
+      renderPodium(parseInt(select.value));
+    });
+    renderPodium(currentWeek || 0);
+  }
+
+  function renderPromoterTable() {
+    const thead = document.getElementById('promoter-thead');
+    const tbody = document.getElementById('promoter-tbody');
+
+    // Build header
+    let headerHTML = '<tr>';
+    headerHTML += '<th>#</th><th>Promotor</th><th>País</th><th>Canal</th><th>Equipo</th>';
+    for (let w = 1; w <= TOTAL_WEEKS; w++) {
+      headerHTML += `<th title="${getWeekDateRange(w)}">S${w}</th>`;
+    }
+    headerHTML += '<th>🔥 Racha</th><th>⭐ Total</th><th>🎯 Estado</th><th>🎁 Premio</th>';
+    headerHTML += '</tr>';
+    thead.innerHTML = headerHTML;
+
+    // Build body
+    renderFilteredTable(promoterScores);
+
+    // Search functionality
+    document.getElementById('search-input').addEventListener('input', function() {
+      const query = normalize(this.value);
+      const filtered = promoterScores.filter(p =>
+        normalize(p.name).includes(query) ||
+        normalize(p.country).includes(query) ||
+        normalize(p.team).includes(query) ||
+        normalize(p.channel).includes(query)
+      );
+      renderFilteredTable(filtered);
+    });
+  }
+
+  function renderFilteredTable(data) {
+    const tbody = document.getElementById('promoter-tbody');
+
+    tbody.innerHTML = data.map(p => {
+      const isTop5 = typeof p.rank === 'number' && p.rank <= 5;
+      const isDQ = p.status === 'Disqualified';
+      let rowClass = '';
+      if (isDQ) rowClass = 'disqualified';
+      else if (isTop5) rowClass = 'top-five';
+
+      let rankClass = '';
+      if (p.rank === 1) rankClass = 'rank-1';
+      else if (p.rank === 2) rankClass = 'rank-2';
+      else if (p.rank === 3) rankClass = 'rank-3';
+
+      // Prize indicator
+      let prizeHTML = '';
+      if (!isDQ && p.eligible) {
+        if (p.rank >= 1 && p.rank <= 2) prizeHTML = '<span class="prize-ipad">🏆 iPad</span>';
+      }
+
+      // Eligibility
+      let eligHTML = '';
+      if (isDQ) {
+        eligHTML = '<span class="eligibility-badge not-eligible">Descalificado</span>';
+      } else if (p.eligible) {
+        eligHTML = '<span class="eligibility-badge eligible">Elegible</span>';
+      } else {
+        const baseNeeded = ELIGIBILITY_FLOOR - p.totalBasePoints;
+        if (baseNeeded <= 3) {
+          eligHTML = '<span class="eligibility-badge on-track">En camino</span>';
+        } else {
+          eligHTML = '<span class="eligibility-badge not-eligible">No elegible</span>';
+        }
+      }
+
+      // Weekly cells
+      const weekCells = p.weeklyData.map(w => {
+        let cls = 'week-points';
+        if (w.finalPoints >= 1.5) cls += ' high';
+        else if (w.finalPoints === 0) cls += ' zero';
+        const multiplierLabel = w.multiplier > 1 ? ` (${w.multiplier}x)` : '';
+        return `<td><span class="${cls}" title="DFTs: ${w.dfts} | ${w.achievement}% | Base: ${w.basePoints}${multiplierLabel}">${w.finalPoints.toFixed(1)}</span></td>`;
+      }).join('');
+
+      return `
+        <tr class="${rowClass}">
+          <td class="rank-cell ${rankClass}">${p.rank}</td>
+          <td>
+            <div class="name-cell" data-promoter="${p.name}">
+              <div class="name-avatar" style="background:${getAvatarColor(p.name)}">${getInitials(p.name)}</div>
+              <span>${p.name}</span>
+            </div>
+          </td>
+          <td><span class="country-badge country-${p.country}">${p.country}</span></td>
+          <td><span class="channel-badge channel-${p.channel}">${p.channel === 'Competitor' ? '⚔️ Comp.' : '📡 Otros'}</span></td>
+          <td style="font-size:0.75rem">${p.team}</td>
+          ${weekCells}
+          <td>${p.currentStreak > 0 ? `<span class="streak-badge">🔥 ${p.currentStreak} sem</span>` : '<span style="color:#ccc">—</span>'}</td>
+          <td class="points-cell">${p.totalFinalPoints.toFixed(1)}</td>
+          <td>${eligHTML}</td>
+          <td class="prize-indicator">${prizeHTML || '—'}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function renderTLTable() {
+    const thead = document.getElementById('tl-thead');
+    const tbody = document.getElementById('tl-tbody');
+
+    let headerHTML = '<tr>';
+    headerHTML += '<th>#</th><th>Team Lead</th><th>País</th><th>Equipo</th>';
+    for (let w = 1; w <= TOTAL_WEEKS; w++) {
+      headerHTML += `<th title="${getWeekDateRange(w)}">S${w}</th>`;
+    }
+    headerHTML += '<th>⭐ Pts Total</th><th>📊 Pts/Sem</th><th>🎁 Premio</th>';
+    headerHTML += '</tr>';
+    thead.innerHTML = headerHTML;
+
+    tbody.innerHTML = tlScores.map(tl => {
+      const isTop1 = tl.rank === 1;
+      let prizeHTML = isTop1 ? '<span class="prize-ipad">🏆 iPad</span>' : '—';
+
+      const weekCells = tl.weeklyScores.map(w => {
+        let cls = 'week-points';
+        if (w.weightedPoints >= 1.5) cls += ' high';
+        else if (w.weightedPoints === 0) cls += ' zero';
+        return `<td><span class="${cls}">${w.weightedPoints.toFixed(2)}</span></td>`;
+      }).join('');
+
+      return `
+        <tr class="${isTop1 ? 'top-five' : ''}">
+          <td class="rank-cell ${tl.rank === 1 ? 'rank-1' : ''}">${tl.rank}</td>
+          <td>
+            <div class="name-cell" data-tl="${tl.name}">
+              <div class="name-avatar" style="background:${getAvatarColor(tl.name)}">${getInitials(tl.name)}</div>
+              <span>${tl.name}</span>
+            </div>
+          </td>
+          <td><span class="country-badge country-${tl.country}">${tl.country}</span></td>
+          <td style="font-size:0.75rem">${tl.teamSize} miembros</td>
+          ${weekCells}
+          <td class="points-cell">${tl.totalScore.toFixed(2)}</td>
+          <td style="font-weight:700">${tl.avgScore.toFixed(2)}</td>
+          <td class="prize-indicator">${prizeHTML}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function renderPrizes() {
+    const top2Hunters = promoterScores.filter(p => p.rank >= 1 && p.rank <= 2 && p.eligible);
+    const top1TL = tlScores.find(tl => tl.rank === 1);
+
+    const prizes = [
+      {
+        icon: '🏆',
+        title: 'Top 2 Hunters',
+        desc: 'Apple iPad (2 unidades)',
+        winner: top2Hunters.length ? top2Hunters.map((p,i) => `${i===0?'🥇':'🥈'} ${p.name} (${p.totalFinalPoints.toFixed(1)} pts)`).join('<br>') : 'Por definir'
+      },
+      {
+        icon: '👔',
+        title: 'Top 1 Manager',
+        desc: 'Apple iPad',
+        winner: top1TL ? `🥇 ${top1TL.name} (${top1TL.totalScore.toFixed(2)} pts)` : 'Por definir'
+      }
+    ];
+
+    document.getElementById('prizes-grid').innerHTML = prizes.map(p => `
+      <div class="prize-card">
+        <div class="prize-icon">${p.icon}</div>
+        <div class="prize-title">${p.title}</div>
+        <div class="prize-desc">${p.desc}</div>
+        <div class="prize-winner">${p.winner}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderRules() {
+    const rules = [
+      {
+        icon: '📊',
+        title: 'Cuotas Semanales',
+        desc: `<strong>Canal Competencia:</strong> 12 DFTs/semana<br><strong>Resto de Canales:</strong> 10 DFTs/semana<br><br>DFT = Driver First Trip (primer viaje completado del conductor adquirido)`
+      },
+      {
+        icon: '🎯',
+        title: 'Sistema de Puntos',
+        desc: `<strong>&lt;70% cuota:</strong> 0 puntos<br><strong>70% cuota:</strong> 0.7 puntos<br><strong>200% cuota:</strong> 2.0 puntos (máximo)<br>Escalado lineal entre 70% y 200%`
+      },
+      {
+        icon: '🔥',
+        title: 'Multiplicadores de Racha',
+        desc: `Logra 100%+ de cuota en semanas consecutivas:<br><strong>2 sem:</strong> 1.2x | <strong>3 sem:</strong> 1.5x | <strong>4 sem:</strong> 1.8x | <strong>5+ sem:</strong> 2.0x`
+      },
+      {
+        icon: '👔',
+        title: 'Fórmula Team Leads',
+        desc: `Promedio ponderado de cuota del equipo por antigüedad:<br><strong>M1:</strong> 10% peso | <strong>M2:</strong> 20% peso | <strong>M3+:</strong> 70% peso`
+      },
+      {
+        icon: '🚪',
+        title: 'Piso de Elegibilidad',
+        desc: `Acumular mínimo <strong>8 puntos base</strong> en las 9 semanas para ser elegible a cualquier premio.`
+      },
+      {
+        icon: '🔒',
+        title: 'Quality Lock',
+        desc: `Fraude = deducción de puntos y descalificación inmediata. Los promotores descalificados aparecen tachados en el ranking.`
+      }
+    ];
+
+    document.getElementById('rules-grid').innerHTML = rules.map(r => `
+      <div class="rule-item">
+        <h4>${r.icon} ${r.title}</h4>
+        <p>${r.desc}</p>
+      </div>
+    `).join('');
+  }
+
+  // ─── TABS ─────────────────────────────────────────────────────────
+  function setupTabs() {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+  }
+
+  // ─── FILE UPLOAD ──────────────────────────────────────────────────
+  function setupFileUploads() {
+    const dftInput = document.getElementById('dft-file-input');
+    const rosterInput = document.getElementById('roster-file-input');
+
+    dftInput.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = evt => {
+        dftsData = parseCSV(evt.target.result);
+        document.getElementById('dft-upload-card').classList.add('loaded');
+        document.getElementById('dft-status').textContent = `✅ ${dftsData.length} registros cargados`;
+        document.getElementById('dft-status').style.color = 'var(--didi-success)';
+        tryRender();
+      };
+      reader.readAsText(file);
+    });
+
+    rosterInput.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = evt => {
+        rosterData = parseCSV(evt.target.result);
+        document.getElementById('roster-upload-card').classList.add('loaded');
+        document.getElementById('roster-status').textContent = `✅ ${rosterData.length} registros cargados`;
+        document.getElementById('roster-status').style.color = 'var(--didi-success)';
+        tryRender();
+      };
+      reader.readAsText(file);
+    });
+  }
+
+  function tryRender() {
+    if (dftsData.length > 0 && rosterData.length > 0) {
+      renderAll();
+    }
+  }
+
+  function renderAll() {
+    currentWeek = getCurrentWeek();
+    calculateScores();
+
+    document.getElementById('main-content').style.display = 'block';
+    document.getElementById('empty-state').style.display = 'none';
+
+    renderWeekIndicator();
+    renderStats();
+    renderPodiumSelector();
+    renderPromoterTable();
+    renderTLTable();
+    renderPrizes();
+    renderRules();
+
+    document.getElementById('last-update').textContent = new Date().toLocaleString('es-MX');
+
+    // Show generate button when data is loaded
+    document.getElementById('generate-btn').style.display = 'inline-block';
+  }
+
+  // ─── GENERATE / DEPLOY ─────────────────────────────────────────
+  // The deploy.ps1 script handles everything: reads CSVs from data/,
+  // injects them into leaderboard.html, pushes to GitHub Pages,
+  // and sends the DChat notification. This button just reminds the user.
+  function generateShareablePage() {
+    alert(
+      'Para publicar el leaderboard:\n\n' +
+      '1. Actualiza los archivos CSV en la carpeta data/\n' +
+      '2. Ejecuta deploy.ps1 (pide a SmartWork que lo ejecute)\n\n' +
+      'El script genera la pagina, la sube a GitHub Pages y envia la notificacion por DChat automaticamente.'
+    );
+  }
+
+  // ─── DEMO DATA ───────────────────────────────────────────────────
+  // Matches the sample CSV files in data/dfts.csv and data/roster.csv
+  function loadDemoData() {
+    const demoRoster = [
+      'Alejandra Torres Vega,MX,Ricardo Medina,Competitor,M3+,Active',
+      'Luis Fernando Castillo,MX,Ricardo Medina,Competitor,M3+,Active',
+      'Daniela R\u00edos Salazar,MX,Ricardo Medina,Rest,M2,Active',
+      'Marco Antonio Herrera,MX,Ricardo Medina,Rest,M1,Active',
+      'Camilo Andr\u00e9s Restrepo,CO,Valentina Ospina,Competitor,M3+,Active',
+      'Natalia G\u00f3mez Londo\u00f1o,CO,Valentina Ospina,Rest,M2,Active',
+      'Sebasti\u00e1n Mej\u00eda Cardona,CO,Valentina Ospina,Competitor,M1,Active',
+      'Juliana R\u00edos Betancur,CO,Valentina Ospina,Rest,M3+,Active',
+      'Facundo P\u00e9rez Dom\u00ednguez,AR,Mart\u00edn Aguirre,Competitor,M3+,Active',
+      'Luciana S\u00e1nchez Moreno,AR,Mart\u00edn Aguirre,Rest,M2,Active',
+      'Tom\u00e1s \u00c1lvarez Ruiz,AR,Mart\u00edn Aguirre,Competitor,M1,Disqualified',
+      'Diego Hern\u00e1ndez Luna,MX,Patricia Reyes,Competitor,M3+,Active',
+      'Sof\u00eda Mart\u00ednez Ochoa,CO,Patricia Reyes,Rest,M2,Active',
+      'Joaqu\u00edn Vargas Mendoza,AR,Patricia Reyes,Competitor,M3+,Active',
+      'Andrea Guzm\u00e1n Paredes,MX,Patricia Reyes,Rest,M1,Active',
+      'Mariana L\u00f3pez Cifuentes,CO,Carlos Montoya,Competitor,M1,Active',
+      'Emiliano Ruiz Acosta,AR,Carlos Montoya,Rest,M2,Active',
+      'Valeria Castro Henao,CO,Carlos Montoya,Competitor,M1,Active',
+      'Ignacio Fern\u00e1ndez Lagos,AR,Carlos Montoya,Rest,M3+,Active',
+      'Carolina Duarte \u00c1vila,CO,Carlos Montoya,Rest,M2,Active'
+    ];
+
+    rosterData = parseCSV('promoter_name,country,team,channel,tenure,status\n' + demoRoster.join('\n'));
+
+    const dftRows = ['promoter_name,country,team,channel,dft_date,status'];
+
+    const profiles = {
+      'Alejandra Torres Vega':        [21,17,18,22,21,18,19,22,18],
+      'Luis Fernando Castillo':       [16,13,16,13,16,12,12,13,15],
+      'Daniela R\u00edos Salazar':    [8,6,9,8,8,8,7,7,6],
+      'Marco Antonio Herrera':        [5,6,3,5,4,5,5,3,4],
+      'Camilo Andr\u00e9s Restrepo':  [18,19,18,16,16,17,17,14,14],
+      'Natalia G\u00f3mez Londo\u00f1o': [8,10,8,8,11,9,9,9,9],
+      'Sebasti\u00e1n Mej\u00eda Cardona': [6,8,7,7,2,3,1,4,7],
+      'Juliana R\u00edos Betancur':   [10,13,14,12,14,12,13,14,14],
+      'Facundo P\u00e9rez Dom\u00ednguez': [18,21,18,21,19,17,19,16,18],
+      'Luciana S\u00e1nchez Moreno':   [6,4,7,6,7,4,6,6,5],
+      'Tom\u00e1s \u00c1lvarez Ruiz':  [6,9,8,6,0,0,0,0,0],
+      'Diego Hern\u00e1ndez Luna':    [16,18,20,18,16,16,20,18,18],
+      'Sof\u00eda Mart\u00ednez Ochoa': [6,7,7,5,7,7,6,5,5],
+      'Joaqu\u00edn Vargas Mendoza':  [13,14,11,11,15,10,16,11,12],
+      'Andrea Guzm\u00e1n Paredes':   [5,4,3,3,2,2,2,3,3],
+      'Mariana L\u00f3pez Cifuentes': [3,5,4,3,3,5,3,6,4],
+      'Emiliano Ruiz Acosta':         [8,9,9,7,8,7,9,7,7],
+      'Valeria Castro Henao':         [4,1,2,4,3,3,3,3,1],
+      'Ignacio Fern\u00e1ndez Lagos': [11,12,10,8,8,12,11,8,11],
+      'Carolina Duarte \u00c1vila':   [8,6,7,7,7,7,6,7,6]
+    };
+
+    Object.keys(profiles).forEach(name => {
+      const roster = demoRoster.find(r => r.startsWith(name));
+      if (!roster) return;
+      const [, country, team, channel,,status] = roster.split(',');
+      const weeklyDFTs = profiles[name];
+
+      weeklyDFTs.forEach((dftCount, weekIdx) => {
+        const weekStart = new Date(PROMO_START.getTime() + weekIdx * 7 * 24 * 60 * 60 * 1000);
+        for (let d = 0; d < dftCount; d++) {
+          const dayOffset = Math.floor(Math.random() * 7);
+          const dftDate = new Date(weekStart.getTime() + dayOffset * 24 * 60 * 60 * 1000);
+          const dateStr = dftDate.toISOString().split('T')[0];
+          dftRows.push(`${name},${country},${team},${channel},${dateStr},${status}`);
+        }
+      });
+    });
+
+    dftsData = parseCSV(dftRows.join('\n'));
+
+    // Update UI
+    document.getElementById('dft-upload-card').classList.add('loaded');
+    document.getElementById('dft-status').textContent = `✅ ${dftsData.length} registros demo cargados`;
+    document.getElementById('dft-status').style.color = 'var(--didi-success)';
+    document.getElementById('roster-upload-card').classList.add('loaded');
+    document.getElementById('roster-status').textContent = `✅ ${rosterData.length} registros demo cargados`;
+    document.getElementById('roster-status').style.color = 'var(--didi-success)';
+
+    renderAll();
+  }
+
+  // ─── ADMIN MODE ────────────────────────────────────────────────────
+  // Change this password to whatever you want.
+  // NOTE: This is NOT cryptographically secure — it just prevents
+  // casual access. Anyone inspecting the source code can read it.
+  const ADMIN_PASSWORD = '';
+
+  let isAdmin = false;
+
+  function setupAdminMode() {
+    const toggle = document.getElementById('admin-toggle');
+    const dialog = document.getElementById('admin-dialog');
+    const pwdInput = document.getElementById('admin-password');
+    const submitBtn = document.getElementById('admin-submit');
+    const cancelBtn = document.getElementById('admin-cancel');
+    const errorMsg = document.getElementById('admin-error');
+
+    toggle.addEventListener('click', () => {
+      if (isAdmin) {
+        // Logout
+        isAdmin = false;
+        document.body.classList.remove('admin-mode');
+        toggle.classList.remove('active');
+        toggle.title = 'Modo administrador';
+      } else {
+        // Show password dialog
+        dialog.classList.add('visible');
+        pwdInput.value = '';
+        errorMsg.textContent = '';
+        setTimeout(() => pwdInput.focus(), 100);
+      }
+    });
+
+    function tryLogin() {
+      if (pwdInput.value === ADMIN_PASSWORD) {
+        isAdmin = true;
+        document.body.classList.add('admin-mode');
+        toggle.classList.add('active');
+        toggle.title = 'Cerrar sesión admin';
+        dialog.classList.remove('visible');
+      } else {
+        errorMsg.textContent = '❌ Contraseña incorrecta';
+        pwdInput.value = '';
+        pwdInput.focus();
+      }
+    }
+
+    submitBtn.addEventListener('click', tryLogin);
+    pwdInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
+    cancelBtn.addEventListener('click', () => dialog.classList.remove('visible'));
+    dialog.addEventListener('click', e => { if (e.target === dialog) dialog.classList.remove('visible'); });
+  }
+
+  // ─── SCORE BREAKDOWN MODAL ────────────────────────────────────────
+  function showScoreBreakdown(promoterName) {
+    const p = promoterScores.find(x => x.name === promoterName);
+    if (!p) return;
+
+    const modal = document.getElementById('score-modal');
+    const quota = QUOTAS[p.channel] || 9;
+    const channelLabel = p.channel === 'Competitor' ? '⚔️ Viajes Competidor' : '📡 Resto de Canales';
+
+    document.getElementById('score-modal-name').textContent = p.name;
+    document.getElementById('score-modal-subtitle').textContent =
+      `Desglose completo de puntuación — High Season Incentive Program 2026`;
+
+    let bodyHTML = '';
+
+    // Info chips
+    bodyHTML += `<div class="info-row">
+      <span class="info-chip">🌎 ${p.country}</span>
+      <span class="info-chip">${channelLabel}</span>
+      <span class="info-chip">👔 Equipo: ${p.team}</span>
+      <span class="info-chip">📅 Antigüedad: ${p.tenure}</span>
+      <span class="info-chip">🎯 Cuota: ${quota} DFTs/sem</span>
+    </div>`;
+
+    // Summary cards
+    bodyHTML += `<div class="breakdown-summary">
+      <div class="sum-item">
+        <div class="sum-value">${p.totalFinalPoints.toFixed(2)}</div>
+        <div class="sum-label">Pts Totales (con racha)</div>
+      </div>
+      <div class="sum-item">
+        <div class="sum-value">${p.totalBasePoints.toFixed(2)}</div>
+        <div class="sum-label">Pts Base (sin racha)</div>
+      </div>
+      <div class="sum-item">
+        <div class="sum-value">${typeof p.rank === 'number' ? '#' + p.rank : p.rank}</div>
+        <div class="sum-label">Posición</div>
+      </div>
+      <div class="sum-item">
+        <div class="sum-value">${p.currentStreak > 0 ? '🔥 ' + p.currentStreak : '—'}</div>
+        <div class="sum-label">Racha Actual</div>
+      </div>
+      <div class="sum-item">
+        <div class="sum-value">${p.eligible ? '✅' : '❌'}</div>
+        <div class="sum-label">Elegible (≥${ELIGIBILITY_FLOOR} pts totales)</div>
+      </div>
+    </div>`;
+
+    // Detailed weekly breakdown table
+    bodyHTML += `<h4 style="font-size:0.9rem; margin-bottom:0.5rem;">📊 Desglose Semanal</h4>`;
+    bodyHTML += `<div style="overflow-x:auto"><table class="breakdown-table">
+      <thead>
+        <tr>
+          <th>Semana</th>
+          <th>Fechas</th>
+          <th>DFTs</th>
+          <th>Cuota</th>
+          <th>% Logro</th>
+          <th>Pts Base</th>
+          <th>Racha</th>
+          <th>Multipl.</th>
+          <th>Pts Final</th>
+          <th>Fórmula</th>
+        </tr>
+      </thead>
+      <tbody>`;
+
+    p.weeklyData.forEach(w => {
+      const achColor = w.achievement >= 100 ? 'var(--didi-success)' :
+                       w.achievement >= 70 ? 'var(--didi-warning)' : 'var(--didi-danger)';
+      const formula = w.basePoints === 0
+        ? `${w.achievement.toFixed(0)}% < 70% → 0`
+        : `${w.basePoints.toFixed(2)} × ${w.multiplier}x = ${w.finalPoints.toFixed(2)}`;
+
+      bodyHTML += `<tr>
+        <td style="font-weight:700">S${w.week}</td>
+        <td style="font-size:0.7rem">${getWeekDateRange(w.week)}</td>
+        <td style="font-weight:700">${w.dfts}</td>
+        <td>${quota}</td>
+        <td style="color:${achColor}; font-weight:700">${w.achievement.toFixed(1)}%</td>
+        <td>${w.basePoints.toFixed(2)}</td>
+        <td>${w.streak > 0 ? '🔥 ' + w.streak : '—'}</td>
+        <td style="font-weight:700; color:${w.multiplier > 1 ? 'var(--didi-orange)' : 'inherit'}">${w.multiplier}x</td>
+        <td style="font-weight:800; color:var(--didi-orange)">${w.finalPoints.toFixed(2)}</td>
+        <td class="formula-col">${formula}</td>
+      </tr>`;
+    });
+
+    bodyHTML += `<tr style="background:var(--didi-light-gray); font-weight:800">
+        <td colspan="5" style="text-align:right">TOTAL →</td>
+        <td>${p.totalBasePoints.toFixed(2)}</td>
+        <td></td>
+        <td></td>
+        <td style="color:var(--didi-orange); font-size:1rem">${p.totalFinalPoints.toFixed(2)}</td>
+        <td></td>
+      </tr>`;
+    bodyHTML += '</tbody></table></div>';
+
+    // Scoring rules reminder
+    bodyHTML += `<div style="margin-top:1rem; padding:1rem; background:#FFF8F0; border-radius:var(--radius-sm); font-size:0.75rem; color:var(--didi-text-secondary)">
+      <strong>📋 Reglas de puntuación:</strong><br>
+      • <strong>Cuota:</strong> ${p.channel === 'Competitor' ? '12' : '10'} DFTs/semana<br>
+      • <strong>&lt;70%:</strong> 0 puntos | <strong>70%:</strong> 0.7 pts | <strong>200%:</strong> 2.0 pts (máximo) — escala lineal<br>
+      • <strong>Rachas:</strong> 2 sem = 1.2x | 3 sem = 1.5x | 4 sem = 1.8x | 5+ sem = 2.0x<br>
+      • <strong>Elegibilidad:</strong> Mínimo ${ELIGIBILITY_FLOOR} puntos base acumulados en las 9 semanas
+    </div>`;
+
+    document.getElementById('score-modal-body').innerHTML = bodyHTML;
+    modal.classList.add('visible');
+  }
+
+  // ─── TL SCORE BREAKDOWN MODAL ──────────────────────────────────
+  function showTLBreakdown(tlName) {
+    const tl = tlScores.find(x => x.name === tlName);
+    if (!tl) return;
+
+    const modal = document.getElementById('score-modal');
+
+    document.getElementById('score-modal-name').textContent = '👔 ' + tl.name;
+    document.getElementById('score-modal-subtitle').textContent =
+      'Desglose de puntuación Team Lead — High Season Incentive Program 2026';
+
+    let bodyHTML = '';
+
+    // Info chips
+    bodyHTML += `<div class="info-row">
+      <span class="info-chip">🌎 ${tl.country}</span>
+      <span class="info-chip">👥 ${tl.teamSize} miembros</span>
+      <span class="info-chip">📋 Fórmula: M1(10%) + M2(20%) + M3+(70%)</span>
+    </div>`;
+
+    // Summary cards
+    const prizeLabel = tl.rank === 1 ? '🏆 iPad' : '—';
+    bodyHTML += `<div class="breakdown-summary">
+      <div class="sum-item">
+        <div class="sum-value">${tl.totalScore.toFixed(2)}</div>
+        <div class="sum-label">Pts Totales</div>
+      </div>
+      <div class="sum-item">
+        <div class="sum-value">${tl.avgScore.toFixed(2)}</div>
+        <div class="sum-label">Pts/Semana</div>
+      </div>
+      <div class="sum-item">
+        <div class="sum-value">#${tl.rank}</div>
+        <div class="sum-label">Posición</div>
+      </div>
+      <div class="sum-item">
+        <div class="sum-value">${prizeLabel}</div>
+        <div class="sum-label">Premio</div>
+      </div>
+    </div>`;
+
+    // Team members overview
+    bodyHTML += `<h4 style="font-size:0.9rem; margin-bottom:0.5rem;">👥 Miembros del Equipo</h4>`;
+    bodyHTML += `<div style="overflow-x:auto"><table class="breakdown-table">
+      <thead><tr><th>Promotor</th><th>Canal</th><th>Antigüedad</th><th>Peso</th><th>Pts Totales</th></tr></thead>
+      <tbody>`;
+    tl.memberObjects.forEach(m => {
+      const weight = TENURE_WEIGHTS[m.tenure] || 0;
+      bodyHTML += `<tr>
+        <td style="font-weight:700; text-align:left">${m.name}</td>
+        <td>${m.channel === 'Competitor' ? '⚔️ Comp.' : '📡 Otros'}</td>
+        <td style="font-weight:600">${m.tenure}</td>
+        <td>${(weight * 100).toFixed(0)}%</td>
+        <td style="font-weight:700; color:var(--didi-orange)">${m.totalFinalPoints.toFixed(2)}</td>
+      </tr>`;
+    });
+    bodyHTML += '</tbody></table></div>';
+
+    // Weekly weighted breakdown
+    bodyHTML += `<h4 style="font-size:0.9rem; margin:1rem 0 0.5rem;">📊 Desglose Semanal Ponderado</h4>`;
+    bodyHTML += `<div style="overflow-x:auto"><table class="breakdown-table">
+      <thead><tr>
+        <th>Semana</th><th>Fechas</th>`;
+    // Tenure group columns
+    ['M1', 'M2', 'M3+'].forEach(t => {
+      bodyHTML += `<th>Prom. ${t}</th><th>× ${(TENURE_WEIGHTS[t]*100).toFixed(0)}%</th>`;
+    });
+    bodyHTML += `<th>Pts Ponderados</th><th>Fórmula</th></tr></thead><tbody>`;
+
+    tl.weeklyScores.forEach(w => {
+      bodyHTML += `<tr><td style="font-weight:700">S${w.week}</td>`;
+      bodyHTML += `<td style="font-size:0.7rem">${getWeekDateRange(w.week)}</td>`;
+
+      const formulaParts = [];
+      ['M1', 'M2', 'M3+'].forEach(t => {
+        const td = w.tenureDetail[t];
+        if (td) {
+          const contribution = +(td.avg * td.weight).toFixed(2);
+          bodyHTML += `<td>${td.avg.toFixed(2)}<br><small style="color:#999">${td.members.map(m => m.name.split(' ')[0]).join(', ')}</small></td>`;
+          bodyHTML += `<td style="color:var(--didi-orange); font-weight:600">${contribution.toFixed(2)}</td>`;
+          formulaParts.push(`${td.avg.toFixed(2)}×${(td.weight*100).toFixed(0)}%`);
+        } else {
+          bodyHTML += `<td style="color:#ccc">—</td><td style="color:#ccc">—</td>`;
+        }
+      });
+
+      bodyHTML += `<td style="font-weight:800; color:var(--didi-orange)">${w.weightedPoints.toFixed(2)}</td>`;
+      bodyHTML += `<td class="formula-col">${formulaParts.join(' + ')}</td>`;
+      bodyHTML += `</tr>`;
+    });
+
+    // Total row
+    bodyHTML += `<tr style="background:var(--didi-light-gray); font-weight:800">
+      <td colspan="${2 + 3*2}" style="text-align:right">TOTAL →</td>
+      <td style="color:var(--didi-orange); font-size:1rem">${tl.totalScore.toFixed(2)}</td>
+      <td></td></tr>`;
+    bodyHTML += '</tbody></table></div>';
+
+    // Formula reminder
+    bodyHTML += `<div style="margin-top:1rem; padding:1rem; background:#FFF8F0; border-radius:var(--radius-sm); font-size:0.75rem; color:var(--didi-text-secondary)">
+      <strong>📋 Fórmula Team Lead:</strong><br>
+      • Pts Semana = (Promedio pts M1 × 10%) + (Promedio pts M2 × 20%) + (Promedio pts M3+ × 70%)<br>
+      • Se usa el promedio de <strong>puntos finales</strong> (con multiplicador de racha) de cada grupo de antigüedad<br>
+      • Si un grupo de antigüedad no tiene miembros, su peso se redistribuye proporcionalmente<br>
+      • <strong>Premio:</strong> Top 1 Manager gana iPad
+    </div>`;
+
+    document.getElementById('score-modal-body').innerHTML = bodyHTML;
+    modal.classList.add('visible');
+  }
+
+  function setupScoreModal() {
+    const modal = document.getElementById('score-modal');
+    const closeBtn = document.getElementById('score-modal-close');
+    const closeBtn2 = document.getElementById('score-modal-close2');
+    const printBtn = document.getElementById('score-modal-print');
+
+    function closeModal() { modal.classList.remove('visible'); }
+    closeBtn.addEventListener('click', closeModal);
+    closeBtn2.addEventListener('click', closeModal);
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+    printBtn.addEventListener('click', () => { window.print(); });
+
+    // Delegate click on promoter names in the table
+    document.getElementById('promoter-tbody').addEventListener('click', e => {
+      const nameCell = e.target.closest('.name-cell[data-promoter]');
+      if (nameCell) {
+        showScoreBreakdown(nameCell.dataset.promoter);
+      }
+    });
+
+    // Delegate click on TL names in the table
+    document.getElementById('tl-tbody').addEventListener('click', e => {
+      const nameCell = e.target.closest('.name-cell[data-tl]');
+      if (nameCell) {
+        showTLBreakdown(nameCell.dataset.tl);
+      }
+    });
+  }
+
+  // ─── INIT ─────────────────────────────────────────────────────────
+  function init() {
+    setupTabs();
+    setupFileUploads();
+    setupAdminMode();
+    setupScoreModal();
+    renderCountdown();
+    setInterval(renderCountdown, 1000);
+    renderRules(); // Show rules even before data load
+
+    document.getElementById('load-demo-btn').addEventListener('click', loadDemoData);
+    document.getElementById('generate-btn').addEventListener('click', generateShareablePage);
+
+    // Global hook for the auto-load script in generated shareable pages
+    window.__leaderboardLoadCSV = function(dftCSV, rosterCSV) {
+      dftsData = parseCSV(dftCSV);
+      rosterData = parseCSV(rosterCSV);
+      document.getElementById('dft-upload-card').classList.add('loaded');
+      document.getElementById('dft-status').textContent = `✅ ${dftsData.length} registros`;
+      document.getElementById('dft-status').style.color = 'var(--didi-success)';
+      document.getElementById('roster-upload-card').classList.add('loaded');
+      document.getElementById('roster-status').textContent = `✅ ${rosterData.length} registros`;
+      document.getElementById('roster-status').style.color = 'var(--didi-success)';
+      renderAll();
+    };
+  }
+
+  // Wait for DOM
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>
+
+<script>
+(function(){
+  var D="promoter_name,promoter_id,country,team,channel,dft_date,status\nCarlos Francisco Salinas Amador,1408588745490386930,MX,Jorge Perez Esteva,Viajes competidor,2026-08-28,Active\nAngel Solano Hernandez,1408588745447991817,MX,Jorge Perez Esteva,Viajes competidor,2026-08-29,Active\nSebastian Garcia Cabrera,1408588745448029145,MX,Alejandra Gonzalez Ramos,Viajes competidor,2026-08-28,Active\nJesus Raymundo Gutierrez Hernandez,1408588745465241162,MX,Alejandra Gonzalez Ramos,Viajes competidor,2026-08-28,Active\nChristian Urzua Navarro,1408588745512948179,MX,Alberto Almazan,Viajes competidor,2026-08-30,Active\nSebastian Garcia Cabrera,1408588745448029145,MX,Alejandra Gonzalez Ramos,Viajes competidor,2026-08-28,Active\nErick Izquierdo Espinosa,1408588745582868974,MX,Jorge Perez Esteva,Viajes competidor,2026-08-29,Active\nCarlos Francisco Salinas Amador,1408588745490386930,MX,Jorge Perez Esteva,Viajes competidor,2026-08-28,Active\nSebastian Garcia Cabrera,1408588745448029145,MX,Alejandra Gonzalez Ramos,Viajes competidor,2026-08-29,Active\nErick Izquierdo Espinosa,1408588745582868974,MX,Jorge Perez Esteva,Viajes competidor,2026-08-26,Active\nSebastian Garcia Cabrera,1408588745448029145,MX,Alejandra Gonzalez Ramos,Viajes competidor,2026-08-28,Active\nSebastian Garcia Cabrera,1408588745448029145,MX,Alejandra Gonzalez Ramos,Viajes competidor,2026-08-26,Active\nAngel Solano Hernandez,1408588745447991817,MX,Jorge Perez Esteva,Viajes competidor,2026-08-26,Active\nErick Izquierdo Espinosa,1408588745582868974,MX,Jorge Perez Esteva,Viajes competidor,2026-08-27,Active\nJuan Manuel Rodriguez Gomez,1408588745525699615,MX,Alejandra Gonzalez Ramos,Malls,2026-08-25,Active\nAndrea Catalina Carrales Beltran,1408588745478194285,MX,Alejandra Gonzalez Ramos,Malls,2026-08-26,Active\nJesus Raymundo Gutierrez Hernandez,1408588745465241162,MX,Alejandra Gonzalez Ramos,Viajes competidor,2026-08-28,Active\nJesus Raymundo Gutierrez Hernandez,1408588745465241162,MX,Alejandra Gonzalez Ramos,Viajes competidor,2026-08-25,Active\nSebastian Garcia Cabrera,1408588745448029145,MX,Alejandra Gonzalez Ramos,Viajes competidor,2026-08-26,Active\nAndrea Catalina Carrales Beltran,1408588745478194285,MX,Alejandra Gonzalez Ramos,Malls,2026-08-25,Active\nAngel Solano Hernandez,1408588745447991817,MX,Jorge Perez Esteva,Viajes competidor,2026-08-26,Active\nChristian Urzua Navarro,1408588745512948179,MX,Alberto Almazan,Viajes competidor,2026-08-25,Active\nJuan Manuel Rodriguez Gomez,1408588745525699615,MX,Alejandra Gonzalez Ramos,Malls,2026-08-25,Active\nChristian Urzua Navarro,1408588745512948179,MX,Alberto Almazan,Viajes competidor,2026-08-27,Active\nAngel Solano Hernandez,1408588745447991817,MX,Jorge Perez Esteva,Viajes competidor,2026-08-28,Active\nCarlos Francisco Salinas Amador,1408588745490386930,MX,Jorge Perez Esteva,Viajes competidor,2026-08-25,Active\nChristian Urzua Navarro,1408588745512948179,MX,Alberto Almazan,Viajes competidor,2026-08-28,Active\nChristian Urzua Navarro,1408588745512948179,MX,Alberto Almazan,Viajes competidor,2026-08-28,Active\nAngel Solano Hernandez,1408588745447991817,MX,Jorge Perez Esteva,Viajes competidor,2026-08-26,Active\nErick Izquierdo Espinosa,1408588745582868974,MX,Jorge Perez Esteva,Viajes competidor,2026-08-27,Active\nErick Izquierdo Espinosa,1408588745582868974,MX,Jorge Perez Esteva,Viajes competidor,2026-08-25,Active\nAndrea Catalina Carrales Beltran,1408588745478194285,MX,Alejandra Gonzalez Ramos,Malls,2026-08-26,Active\nChristian Urzua Navarro,1408588745512948179,MX,Alberto Almazan,Viajes competidor,2026-08-26,Active\nChristian Urzua Navarro,1408588745512948179,MX,Alberto Almazan,Viajes competidor,2026-08-26,Active\nSebastian Garcia Cabrera,1408588745448029145,MX,Alejandra Gonzalez Ramos,Viajes competidor,2026-08-25,Active\nAngel Solano Hernandez,1408588745447991817,MX,Jorge Perez Esteva,Viajes competidor,2026-08-25,Active\nJesus Raymundo Gutierrez Hernandez,1408588745465241162,MX,Alejandra Gonzalez Ramos,Viajes competidor,2026-08-24,Active\nSebastian Garcia Cabrera,1408588745448029145,MX,Alejandra Gonzalez Ramos,Viajes competidor,2026-08-24,Active\nAndrea Catalina Carrales Beltran,1408588745478194285,MX,Alejandra Gonzalez Ramos,Malls,2026-08-25,Active\nJuan Manuel Rodriguez Gomez,1408588745525699615,MX,Alejandra Gonzalez Ramos,Malls,2026-08-26,Active\nMaria Fernanda Zamora Vargas,1408588745548316411,MX,Alejandra Gonzalez Ramos,Malls,2026-08-24,Active\nJuan Manuel Rodriguez Gomez,1408588745525699615,MX,Alejandra Gonzalez Ramos,Malls,2026-08-24,Active\nJuan Manuel Rodriguez Gomez,1408588745525699615,MX,Alejandra Gonzalez Ramos,Malls,2026-08-24,Active\nSebastian Garcia Cabrera,1408588745448029145,MX,Alejandra Gonzalez Ramos,Viajes competidor,2026-08-25,Active\nAngel Solano Hernandez,1408588745447991817,MX,Jorge Perez Esteva,Viajes competidor,2026-08-25,Active\nSebastian Garcia Cabrera,1408588745448029145,MX,Alejandra Gonzalez Ramos,Viajes competidor,2026-08-25,Active\nSebastian Garcia Cabrera,1408588745448029145,MX,Alejandra Gonzalez Ramos,Viajes competidor,2026-08-24,Active\n";
+  var R="promoter_name,promoter_id,country,team,channel,tenure,status\nChristian Urzua Navarro,1408588745512948179,MX,Alberto Almazan,Viajes competidor,M3,Active\nZamira Ramírez Jacques,1408588745565642227,MX,Alberto Almazan,Viajes competidor,M2,Active\nJose Juan Velázquez,1408588745582832213,MX,Alberto Almazan,Viajes competidor,M1,Active\nOscar Alejandro Michel Pérez,1408588745586846797,MX,Alberto Almazan,Viajes competidor,M1,Active\nAlejandro Oropesa Piña,1408588745447975131,MX,Jorge Perez Esteva,Viajes competidor,M3,Active\nAngel Solano Hernandez,1408588745447991817,MX,Jorge Perez Esteva,Viajes competidor,M3,Active\nCarlos Francisco Salinas Amador,1408588745490386930,MX,Jorge Perez Esteva,Viajes competidor,M3,Active\nMarisol Uicab Ramos,1408588745561692997,MX,Jorge Perez Esteva,Malls,M2,Active\nErick Izquierdo Espinosa,1408588745582868974,MX,Jorge Perez Esteva,Viajes competidor,M1,Active\nSebastian Garcia Cabrera,1408588745448029145,MX,Alejandra Gonzalez Ramos,Viajes competidor,M3,Active\nJesus Raymundo Gutierrez Hernandez,1408588745465241162,MX,Alejandra Gonzalez Ramos,Viajes competidor,M3,Active\nAndrea Catalina Carrales Beltran,1408588745478194285,MX,Alejandra Gonzalez Ramos,Malls,M3,Active\nJuan Manuel Rodriguez Gomez,1408588745525699615,MX,Alejandra Gonzalez Ramos,Malls,M3,Active\nMaria Fernanda Zamora Vargas,1408588745548316411,MX,Alejandra Gonzalez Ramos,Malls,M2,Active\n";
+  document.addEventListener('DOMContentLoaded',function(){
+    setTimeout(function(){
+      if(window.__leaderboardLoadCSV) window.__leaderboardLoadCSV(D,R);
+    },200);
+  });
+})();
+</script>
+</body>
+</html>
