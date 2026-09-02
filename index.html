@@ -1171,9 +1171,25 @@ body.admin-mode .upload-grid { display: grid !important; }
 
   // ─── UTILITIES ────────────────────────────────────────────────────
 
+  // Repair UTF-8 mojibake (Excel opens UTF-8 as Windows-1252, turning \u00ed\u2192\u00c3\u00ad, \u00f1\u2192\u00c3\u00b1, etc.)
+  function repairMojibake(str) {
+    try {
+      var bytes = [];
+      for (var i = 0; i < str.length; i++) {
+        var c = str.charCodeAt(i);
+        if (c > 255) return str;
+        bytes.push(c);
+      }
+      var decoded = new TextDecoder('utf-8', {fatal: true}).decode(new Uint8Array(bytes));
+      if (decoded.length < str.length) return decoded;
+    } catch(e) {}
+    return str;
+  }
+
   // Strip accents/diacritics and lowercase for bulletproof matching
   function normalize(str) {
-    return (str || '').trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    var s = repairMojibake((str || '').trim());
+    return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ');
   }
 
   // Resolve a raw channel value to 'Competitor' or 'Rest'
