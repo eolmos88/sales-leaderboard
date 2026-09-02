@@ -1266,7 +1266,7 @@ body.admin-mode .upload-grid { display: grid !important; }
       const name = (r.promoter_name || '').trim();
       if (!id && !name) return;
       // Use promoter_id as primary key; fall back to normalized name if no id
-      const key = id || normalize(name);
+      const key = normalize(name) || id;
       rosterMap[key] = r;
       rosterDisplay[key] = name;
     });
@@ -1278,7 +1278,7 @@ body.admin-mode .upload-grid { display: grid !important; }
       const id = (row.promoter_id || '').trim();
       const name = (row.promoter_name || '').trim();
       if (!id && !name) return;
-      const key = id || normalize(name);
+      const key = normalize(name) || id;
       if (!promoterDFTs[key]) promoterDFTs[key] = { weeks: {} };
       if (!dftDisplay[key]) dftDisplay[key] = name;
       const week = getWeekNumber(row.dft_date);
