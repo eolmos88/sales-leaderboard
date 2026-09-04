@@ -1425,6 +1425,10 @@ body.admin-mode .upload-grid { display: grid !important; }
         });
 
         let weightedPoints = 0;
+        let totalWeight = 0;
+        Object.keys(tenureGroups).forEach(tenure => {
+          if (tenureGroups[tenure].length > 0) totalWeight += TENURE_WEIGHTS[tenure] || 0;
+        });
 
         Object.keys(tenureGroups).forEach(tenure => {
           const group = tenureGroups[tenure];
@@ -1433,8 +1437,9 @@ body.admin-mode .upload-grid { display: grid !important; }
             const wd = m.weeklyData.find(x => x.week === w);
             return s + (wd ? wd.finalPoints : 0);
           }, 0);
-          const weight = TENURE_WEIGHTS[tenure] || 0;
-          weightedPoints += sumPoints * weight;
+          const rawWeight = TENURE_WEIGHTS[tenure] || 0;
+          const effectiveWeight = totalWeight > 0 ? rawWeight / totalWeight : 0;
+          weightedPoints += sumPoints * effectiveWeight;
         });
 
         // Store tenure detail for breakdown modal
@@ -1447,7 +1452,9 @@ body.admin-mode .upload-grid { display: grid !important; }
             return { name: m.name, points: wd ? wd.finalPoints : 0 };
           });
           const sum = memberPoints.reduce((s, mp) => s + mp.points, 0);
-          tenureDetail[tenure] = { members: memberPoints, sum: +sum.toFixed(2), weight: TENURE_WEIGHTS[tenure] || 0 };
+          const rdw = TENURE_WEIGHTS[tenure] || 0;
+          const efw = totalWeight > 0 ? rdw / totalWeight : 0;
+          tenureDetail[tenure] = { members: memberPoints, sum: +sum.toFixed(2), weight: efw };
         });
 
         weeklyScores.push({
