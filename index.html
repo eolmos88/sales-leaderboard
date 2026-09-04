@@ -1079,7 +1079,7 @@ body.admin-mode .upload-grid { display: grid !important; }
   <div class="tab-content" id="tab-teamleads">
     <div class="podium-section">
       <div class="section-title">👔 Ranking de Team Leads</div>
-      <p class="podium-subtitle">Evaluados por promedio ponderado de quota del equipo según antigüedad: M1 (10%) + M2 (20%) + M3+ (70%)</p>
+      <p class="podium-subtitle">Evaluados por suma ponderada de puntos del equipo según antigüedad: Suma M1 × 10% + Suma M2 × 20% + Suma M3+ × 70%</p>
     </div>
     <div class="leaderboard-section">
       <div class="leaderboard-card">
@@ -1425,24 +1425,17 @@ body.admin-mode .upload-grid { display: grid !important; }
         });
 
         let weightedPoints = 0;
-        let totalWeight = 0;
 
         Object.keys(tenureGroups).forEach(tenure => {
           const group = tenureGroups[tenure];
           if (group.length === 0) return;
-          const avgPoints = group.reduce((s, m) => {
+          const sumPoints = group.reduce((s, m) => {
             const wd = m.weeklyData.find(x => x.week === w);
             return s + (wd ? wd.finalPoints : 0);
-          }, 0) / group.length;
+          }, 0);
           const weight = TENURE_WEIGHTS[tenure] || 0;
-          weightedPoints += avgPoints * weight;
-          totalWeight += weight;
+          weightedPoints += sumPoints * weight;
         });
-
-        // Normalize if not all tenure groups present
-        if (totalWeight > 0 && totalWeight < 1) {
-          weightedPoints = weightedPoints / totalWeight;
-        }
 
         // Store tenure detail for breakdown modal
         const tenureDetail = {};
@@ -1453,8 +1446,8 @@ body.admin-mode .upload-grid { display: grid !important; }
             const wd = m.weeklyData.find(x => x.week === w);
             return { name: m.name, points: wd ? wd.finalPoints : 0 };
           });
-          const avg = memberPoints.reduce((s, mp) => s + mp.points, 0) / memberPoints.length;
-          tenureDetail[tenure] = { members: memberPoints, avg: +avg.toFixed(2), weight: TENURE_WEIGHTS[tenure] || 0 };
+          const sum = memberPoints.reduce((s, mp) => s + mp.points, 0);
+          tenureDetail[tenure] = { members: memberPoints, sum: +sum.toFixed(2), weight: TENURE_WEIGHTS[tenure] || 0 };
         });
 
         weeklyScores.push({
@@ -1835,7 +1828,7 @@ body.admin-mode .upload-grid { display: grid !important; }
       {
         icon: '👔',
         title: 'Fórmula Team Leads',
-        desc: `Promedio ponderado de cuota del equipo por antigüedad:<br><strong>M1:</strong> 10% peso | <strong>M2:</strong> 20% peso | <strong>M3+:</strong> 70% peso`
+        desc: `Suma ponderada de puntos del equipo por antigüedad:<br><strong>M1:</strong> 10% peso | <strong>M2:</strong> 20% peso | <strong>M3+:</strong> 70% peso`
       },
       {
         icon: '🚪',
@@ -2265,7 +2258,7 @@ body.admin-mode .upload-grid { display: grid !important; }
         <th>Semana</th><th>Fechas</th>`;
     // Tenure group columns
     ['M1', 'M2', 'M3+'].forEach(t => {
-      bodyHTML += `<th>Prom. ${t}</th><th>× ${(TENURE_WEIGHTS[t]*100).toFixed(0)}%</th>`;
+      bodyHTML += `<th>Suma ${t}</th><th>× ${(TENURE_WEIGHTS[t]*100).toFixed(0)}%</th>`;
     });
     bodyHTML += `<th>Pts Ponderados</th><th>Fórmula</th></tr></thead><tbody>`;
 
@@ -2277,10 +2270,10 @@ body.admin-mode .upload-grid { display: grid !important; }
       ['M1', 'M2', 'M3+'].forEach(t => {
         const td = w.tenureDetail[t];
         if (td) {
-          const contribution = +(td.avg * td.weight).toFixed(2);
-          bodyHTML += `<td>${td.avg.toFixed(2)}<br><small style="color:#999">${td.members.map(m => m.name.split(' ')[0]).join(', ')}</small></td>`;
+          const contribution = +(td.sum * td.weight).toFixed(2);
+          bodyHTML += `<td>${td.sum.toFixed(2)}<br><small style="color:#999">${td.members.map(m => m.name.split(' ')[0]).join(', ')}</small></td>`;
           bodyHTML += `<td style="color:var(--didi-orange); font-weight:600">${contribution.toFixed(2)}</td>`;
-          formulaParts.push(`${td.avg.toFixed(2)}×${(td.weight*100).toFixed(0)}%`);
+          formulaParts.push(`${td.sum.toFixed(2)}×${(td.weight*100).toFixed(0)}%`);
         } else {
           bodyHTML += `<td style="color:#ccc">—</td><td style="color:#ccc">—</td>`;
         }
@@ -2301,8 +2294,8 @@ body.admin-mode .upload-grid { display: grid !important; }
     // Formula reminder
     bodyHTML += `<div style="margin-top:1rem; padding:1rem; background:#FFF8F0; border-radius:var(--radius-sm); font-size:0.75rem; color:var(--didi-text-secondary)">
       <strong>📋 Fórmula Team Lead:</strong><br>
-      • Pts Semana = (Promedio pts M1 × 10%) + (Promedio pts M2 × 20%) + (Promedio pts M3+ × 70%)<br>
-      • Se usa el promedio de <strong>puntos finales</strong> (con multiplicador de racha) de cada grupo de antigüedad<br>
+      • Pts Semana = (Suma pts M1 × 10%) + (Suma pts M2 × 20%) + (Suma pts M3+ × 70%)<br>
+      • Se usa la suma de <strong>puntos finales</strong> (con multiplicador de racha) de cada grupo de antigüedad<br>
       • Si un grupo de antigüedad no tiene miembros, su peso se redistribuye proporcionalmente<br>
       • <strong>Premio:</strong> Top 2 Team Leads ganan iPad Air
     </div>`;
