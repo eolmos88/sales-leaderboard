@@ -2223,18 +2223,29 @@ body.admin-mode .upload-grid { display: grid !important; }
       </div>
     </div>`;
 
+    // Compute effective weights (normalize so present groups sum to 100%)
+    const presentGroups = {};
+    tl.memberObjects.forEach(m => {
+      const t = (m.tenure === 'M3' || m.tenure === 'M3+') ? 'M3+' : m.tenure;
+      presentGroups[t] = true;
+    });
+    let tlTotalWeight = 0;
+    Object.keys(presentGroups).forEach(t => { tlTotalWeight += TENURE_WEIGHTS[t] || 0; });
+
     // Team members overview
     bodyHTML += `<h4 style="font-size:0.9rem; margin-bottom:0.5rem;">👥 Miembros del Equipo</h4>`;
     bodyHTML += `<div style="overflow-x:auto"><table class="breakdown-table">
-      <thead><tr><th>Promotor</th><th>Canal</th><th>Antigüedad</th><th>Peso</th><th>Pts Totales</th></tr></thead>
+      <thead><tr><th>Promotor</th><th>Canal</th><th>Antigüedad</th><th>Peso Efectivo</th><th>Pts Totales</th></tr></thead>
       <tbody>`;
     tl.memberObjects.forEach(m => {
-      const weight = TENURE_WEIGHTS[m.tenure] || 0;
+      const tKey = (m.tenure === 'M3' || m.tenure === 'M3+') ? 'M3+' : m.tenure;
+      const rawWeight = TENURE_WEIGHTS[tKey] || 0;
+      const effectiveWeight = tlTotalWeight > 0 ? rawWeight / tlTotalWeight : 0;
       bodyHTML += `<tr>
         <td style="font-weight:700; text-align:left">${m.name}</td>
         <td>${m.channel === 'Competitor' ? '⚔️ Comp.' : '📡 Otros'}</td>
         <td style="font-weight:600">${m.tenure}</td>
-        <td>${(weight * 100).toFixed(0)}%</td>
+        <td>${(effectiveWeight * 100).toFixed(0)}%</td>
         <td style="font-weight:700; color:var(--didi-orange)">${m.totalFinalPoints.toFixed(2)}</td>
       </tr>`;
     });
