@@ -1359,6 +1359,8 @@ body.admin-mode .upload-grid { display: grid !important; }
       const totalFinalPoints = weeklyData.reduce((s, w) => s + w.finalPoints, 0);
       const eligible = totalFinalPoints >= ELIGIBILITY_FLOOR;
 
+      const totalDFTs = weeklyData.reduce((s, w) => s + w.dfts, 0);
+
       promoterScores.push({
         name,
         country: (roster.country || '').trim(),
@@ -1369,6 +1371,7 @@ body.admin-mode .upload-grid { display: grid !important; }
         weeklyData,
         totalBasePoints: +totalBasePoints.toFixed(2),
         totalFinalPoints: +totalFinalPoints.toFixed(2),
+        totalDFTs,
         currentStreak,
         maxStreak,
         eligible: status === 'Disqualified' ? false : eligible
@@ -1379,7 +1382,7 @@ body.admin-mode .upload-grid { display: grid !important; }
     promoterScores.sort((a, b) => {
       if (a.status === 'Disqualified' && b.status !== 'Disqualified') return 1;
       if (b.status === 'Disqualified' && a.status !== 'Disqualified') return -1;
-      return b.totalFinalPoints - a.totalFinalPoints;
+      return b.totalFinalPoints - a.totalFinalPoints || b.totalDFTs - a.totalDFTs;
     });
 
     // Assign ranks
@@ -1647,7 +1650,7 @@ body.admin-mode .upload-grid { display: grid !important; }
     for (let w = 1; w <= TOTAL_WEEKS; w++) {
       headerHTML += `<th title="${getWeekDateRange(w)}">S${w}</th>`;
     }
-    headerHTML += '<th>🔥 Racha</th><th>⭐ Total</th><th>🎯 Estado</th><th>🎁 Premio</th>';
+    headerHTML += '<th>🔥 Racha</th><th>🚗 DFTs</th><th>⭐ Total</th><th>🎯 Estado</th><th>🎁 Premio</th>';
     headerHTML += '</tr>';
     thead.innerHTML = headerHTML;
 
@@ -1727,6 +1730,7 @@ body.admin-mode .upload-grid { display: grid !important; }
           <td style="font-size:0.75rem">${p.team}</td>
           ${weekCells}
           <td>${p.currentStreak > 0 ? `<span class="streak-badge">🔥 ${p.currentStreak} sem</span>` : '<span style="color:#ccc">—</span>'}</td>
+          <td style="font-weight:600; text-align:center">${p.totalDFTs}</td>
           <td class="points-cell">${p.totalFinalPoints.toFixed(1)}</td>
           <td>${eligHTML}</td>
           <td class="prize-indicator">${prizeHTML || '—'}</td>
@@ -1841,6 +1845,11 @@ body.admin-mode .upload-grid { display: grid !important; }
         icon: '🚪',
         title: 'Piso de Elegibilidad',
         desc: `Acumular mínimo <strong>7 puntos base</strong> en las 9 semanas para ser elegible a cualquier premio.`
+      },
+      {
+        icon: '🏁',
+        title: 'Desempate',
+        desc: `En caso de empate por puntos acumulados, se contarán el <strong>total de DFTs en el periodo</strong> como criterio de desempate.`
       },
       {
         icon: '🔒',
