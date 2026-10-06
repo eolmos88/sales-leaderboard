@@ -1314,7 +1314,7 @@ body.admin-mode .upload-grid { display: grid !important; }
       const channel = resolveChannel(roster.channel || 'Rest');
       const quota = QUOTAS[channel] || 9;
       const status = (roster.status || 'Active').trim();
-      if (status === 'Inactive') return;
+      if (status.toLowerCase() === 'inactive') return;
 
       const weeklyData = [];
       let totalBasePoints = 0;
